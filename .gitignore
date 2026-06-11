@@ -23,6 +23,29 @@
 # misc
 .DS_Store
 *.pem
+/public/uploads
+
+# security & local databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+/dev.db
+
+# log files and temporary outputs
+*.log
+*.txt
+/scratch/
+
+# scratch scripts
+/run*.js
+/test*.js
+
+# next-pwa generated files
+/public/sw.js
+/public/sw.js.map
+/public/workbox-*.js
+/public/workbox-*.js.map
 
 # debug
 npm-debug.log*
@@ -39,3 +62,5 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma

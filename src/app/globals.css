@@ -1,40 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
+
+/* ─── Anti-Tweet Design Tokens ─── */
 :root {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-rgb: 59, 130, 246;
+
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-border-light: rgba(255,255,255,0.06);
+
+  --glass-bg: rgba(15, 23, 42, 0.85);
+  --sidebar-width: 275px;
+  --main-width: 600px;
+
+  --muted: #64748b;
+  --muted-hover: #e7e9ea;
+  --error: #ef4444;
+  --success: #10b981;
+  --warning: #ffd400;
+
+  --hover-bg: rgba(255, 255, 255, 0.07);
+  --active-bg: rgba(255, 255, 255, 0.1);
+  --nav-hover: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme='light'] {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html {
-  height: 100%;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --foreground: #0f1419;
+  --accent: #1d9bf0;
+  --accent-hover: #1a8cd8;
+  --card-bg: #f7f9f9;
+  --card-border: #eff3f4;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --muted: #536471;
+  --hover-bg: rgba(15, 20, 25, 0.07);
+  --active-bg: rgba(15, 20, 25, 0.1);
+  --nav-hover: rgba(15, 20, 25, 0.07);
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  line-height: 1.5;
+  background-image: radial-gradient(circle at top, rgba(30,58,138,0.2), transparent 40%),
+                    radial-gradient(circle at bottom right, rgba(15,23,42,1), var(--background) 70%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -42,8 +66,666 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* ─── Twitter/X Layout Shell ─── */
+.x-layout {
+  display: flex;
+  min-height: 100vh;
+  max-width: 1265px;
+  margin: 0 auto;
 }
+
+/* ─── Left Sidebar ─── */
+.x-sidebar {
+  width: var(--sidebar-width);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 12px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ─── Main Feed ─── */
+.x-main {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--main-width);
+  border-left: 1px solid var(--card-border);
+  border-right: 1px solid var(--card-border);
+  min-height: 100vh;
+}
+
+/* ─── Right Panel ─── */
+.x-right {
+  width: 350px;
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+
+/* ─── Nav Item (Twitter/X style) ─── */
+.x-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  text-decoration: none;
+  color: var(--foreground);
+  width: fit-content;
+  min-width: 52px;
+  position: relative;
+}
+
+.x-nav-item:hover {
+  background: var(--nav-hover);
+  color: var(--foreground);
+}
+
+.x-nav-item.active {
+  font-weight: 700;
+}
+
+.x-nav-item .x-nav-label {
+  font-size: 1.25rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.x-nav-item.active .x-nav-label {
+  font-weight: 700;
+}
+
+/* ─── Post Button ─── */
+.x-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-top: 4px;
+}
+
+.x-post-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* ─── Badge ─── */
+.x-badge {
+  background: var(--accent);
+  color: white;
+  border-radius: 9999px;
+  padding: 0 6px;
+  min-width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+/* ─── Sticky Header ─── */
+.x-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  padding: 0 16px;
+  height: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+[data-theme='light'] .x-header {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.x-header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Right Sidebar Search ─── */
+.x-search-wrap {
+  position: relative;
+  margin-top: 4px;
+}
+
+.x-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 52px;
+  background: var(--card-bg);
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.x-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--background);
+}
+
+.x-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
+/* ─── Trend Widget ─── */
+.x-widget {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.x-widget-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 12px 16px;
+}
+
+.x-trend-item {
+  display: block;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.x-trend-item:hover {
+  background: var(--hover-bg);
+}
+
+.x-trend-meta {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.x-trend-tag {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin: 2px 0;
+}
+
+/* ─── Who to Follow ─── */
+.x-follow-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  transition: background 0.15s;
+}
+
+.x-follow-item:hover {
+  background: var(--hover-bg);
+}
+
+.x-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+}
+
+.x-follow-btn {
+  margin-left: auto;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.x-follow-btn.follow {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.x-follow-btn.follow:hover {
+  background: rgba(231, 233, 234, 0.9);
+}
+
+.x-follow-btn.following {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--card-border);
+}
+
+/* X-style Unfollow toggle on hover */
+.x-follow-btn.following:hover {
+  background: rgba(244, 33, 46, 0.1);
+  border-color: var(--error);
+  color: transparent !important; /* Hide original text, show pseudo-element */
+  position: relative;
+}
+
+.x-follow-btn.following:hover::before {
+  content: "Unfollow";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  color: var(--error); /* Explicitly set red color for pseudo text */
+  text-align: center;
+}
+
+/* ─── Account Menu ─── */
+.x-account-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 9999px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--foreground);
+  width: 100%;
+  transition: background 0.15s;
+  text-align: left;
+  font-family: inherit;
+}
+
+.x-account-btn:hover {
+  background: var(--nav-hover);
+}
+
+/* ─── Glass Panel (kept for analytics/cards) ─── */
+.glass-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+}
+
+/* ─── Settings Layout ─── */
+.x-settings-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.x-settings-nav {
+  width: 320px;
+  border-right: 1px solid var(--card-border);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding-top: 8px;
+}
+
+.x-settings-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.x-settings-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.9375rem;
+  color: var(--foreground);
+  border-left: 2px solid transparent;
+  text-decoration: none;
+}
+
+.x-settings-nav-item:hover {
+  background: var(--hover-bg);
+}
+
+.x-settings-nav-item.active {
+  font-weight: 700;
+  border-left-color: var(--accent);
+  background: var(--hover-bg);
+  color: var(--accent);
+}
+
+.x-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--card-border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.x-settings-row:hover {
+  background: var(--hover-bg);
+}
+
+/* ─── Toggle Switch ─── */
+.x-toggle {
+  width: 51px;
+  height: 31px;
+  border-radius: 9999px;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.x-toggle-thumb {
+  width: 27px;
+  height: 27px;
+  background: white;
+  border-radius: 9999px;
+  position: absolute;
+  top: 2px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* ─── Input Fields ─── */
+.x-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--background);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.x-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.x-label {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+/* ─── Divider ─── */
+.x-divider {
+  height: 1px;
+  background: var(--card-border);
+  width: 100%;
+}
+
+/* ─── Buttons (X-style) ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-size: 0.9375rem;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.btn-primary:hover {
+  background: rgba(231, 233, 234, 0.9);
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-accent:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  border: 1px solid var(--card-border);
+}
+
+.btn-secondary:hover {
+  background: var(--hover-bg);
+}
+
+.btn-danger {
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.btn-danger:hover {
+  background: rgba(244, 33, 46, 0.1);
+}
+
+/* ─── Input field (legacy compat) ─── */
+.input-field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--background);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: none;
+}
+
+/* ─── Animations ─── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 0px; }
+
+/* ─── Tweet Card hover ─── */
+.tweet-card:hover {
+  background: rgba(231, 233, 234, 0.03);
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — Mobile / Tablet / Laptop
+   ══════════════════════════════════════════════ */
+
+/* ── Desktop (≥ 1271px): full sidebar + right panel ── */
+@media (min-width: 1271px) {
+  .x-mobile-top-bar { display: none; }
+  .x-mobile-nav     { display: none; }
+  .x-mobile-fab     { display: none; }
+}
+
+/* ── Laptop (1025–1270px): icon-only sidebar, no right panel labels ── */
+@media (max-width: 1270px) {
+  .x-sidebar { width: 72px; padding: 0 8px; }
+  .x-nav-item { padding: 12px; gap: 0; justify-content: center; border-radius: 9999px; }
+  .x-nav-item .x-nav-label { display: none; }
+  .x-post-btn .x-post-label { display: none; }
+  .x-post-btn { width: 50px; height: 50px; padding: 0; border-radius: 9999px; }
+  .x-account-btn .x-account-info { display: none; }
+  .x-account-btn .x-account-more { display: none; }
+  .x-account-btn { justify-content: center; padding: 8px; }
+  /* Hide the wordmark text in sidebar — only logo icon */
+  .x-sidebar-wordmark-text { display: none; }
+}
+
+/* ── Tablet (769–1024px): sidebar hidden, top bar + bottom nav ── */
+@media (max-width: 1150px) {
+  .x-right { display: none; }
+}
+
+@media (max-width: 1024px) {
+  .x-sidebar { display: none; }
+  .x-main { max-width: 100%; border: none; padding-top: 0; }
+
+  /* Mobile top bar */
+  .x-mobile-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 53px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  [data-theme='light'] .x-mobile-top-bar {
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Bottom nav */
+  .x-mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--background);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 100;
+  }
+
+  /* Space so content isn't behind bottom nav */
+  .x-main { padding-bottom: 70px; }
+
+  /* Floating compose button */
+  .x-mobile-fab {
+    position: fixed;
+    bottom: 72px;
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.5);
+    transition: transform 0.15s, background 0.15s;
+  }
+
+  .x-mobile-fab:hover,
+  .x-mobile-fab:active { transform: scale(0.95); background: var(--accent-hover); }
+}
+
+/* ── Phone (≤ 640px): tighter spacing ── */
+@media (max-width: 640px) {
+  .glass-panel { padding: 1.5rem !important; }
+  .container { padding: 0 12px; }
+
+  /* Full-width modals / cards */
+  .x-tweet-compose { border-radius: 0; border-left: none; border-right: none; }
+
+  /* Input fields fill width */
+  input, select, textarea { max-width: 100%; }
+
+  /* Settings: stack panels */
+  .x-settings-layout { flex-direction: column; }
+  .x-settings-nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--card-border);
+    padding-top: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .x-settings-nav::-webkit-scrollbar { display: none; }
+  .x-settings-nav-item {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .x-settings-nav-item.active {
+    border-left: none;
+    border-bottom-color: var(--accent);
+  }
+  .x-settings-content { min-width: 0; }
+}
+
+/* ── Laptop (1025–1270px): show mobile top bar hidden, show mobile nav hidden ── */
+@media (min-width: 1025px) {
+  .x-mobile-nav     { display: none; }
+  .x-mobile-top-bar { display: none; }
+  .x-mobile-fab     { display: none; }
+}
+
