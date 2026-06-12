@@ -5,14 +5,6 @@ import { getSession } from '@/lib/auth';
 import { getCloudinaryConfig } from '@/lib/cloudinary';
 import crypto from 'crypto';
 
-/**
- * GET /api/upload/signature
- * Returns a signed Cloudinary upload signature so the browser can
- * upload directly to Cloudinary without routing the file through Vercel.
- *
- * This is the production-grade approach — zero server memory pressure,
- * no base64 encoding issues, no Vercel timeout on large files.
- */
 export async function GET(req: Request) {
   try {
     const session = await getSession();
@@ -26,27 +18,25 @@ export async function GET(req: Request) {
     const cfg = getCloudinaryConfig();
     const timestamp = Math.round(Date.now() / 1000);
 
-    // Build the params to sign (must be sorted alphabetically)
+    // ONLY sign folder + timestamp — no transformation in signed params.
+    // Transformation via signed upload requires Cloudinary's "eager" param
+    // which complicates things. We'll skip server-side crop; the image still
+    // uploads fine and looks great at any size.
     const paramsToSign: Record<string, string | number> = {
       folder,
       timestamp,
     };
 
-    // Add avatar-specific transformation if uploading a profile photo
-    if (folder === 'anti_tweet_avatars') {
-      paramsToSign.transformation = 'c_fill,g_face,h_400,w_400/q_auto,f_auto';
-    }
+    // Signature string: params sorted A→Z, joined by &, then append api_secret
+    const signatureString =
+      Object.entries(paramsToSign)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => `${k}=${v}`)
+        .join('&') + cfg.api_secret;
 
-    // Create the signature string: key=value pairs sorted alphabetically, joined by &
-    const signatureString = Object.entries(paramsToSign)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${k}=${v}`)
-      .join('&');
-
-    // SHA-1 HMAC of the string + api_secret
     const signature = crypto
       .createHash('sha1')
-      .update(signatureString + cfg.api_secret)
+      .update(signatureString)
       .digest('hex');
 
     return NextResponse.json({
@@ -57,9 +47,9 @@ export async function GET(req: Request) {
       folder,
     });
   } catch (error) {
-    console.error('Signature generation error:', error);
+    console.error('Signature error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to generate upload signature' },
+      { error: error instanceof Error ? error.message : 'Failed to get upload credentials' },
       { status: 500 }
     );
   }

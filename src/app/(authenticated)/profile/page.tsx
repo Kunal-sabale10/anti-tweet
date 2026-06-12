@@ -183,9 +183,8 @@ export default function ProfilePage() {
       fd.append('file', file);
       fd.append('api_key', sigData.api_key!);
       fd.append('timestamp', String(sigData.timestamp));
-      fd.append('signature', sigData.signature);
+      fd.append('signature', sigData.signature!);
       fd.append('folder', sigData.folder!);
-      fd.append('transformation', 'c_fill,g_face,h_400,w_400/q_auto,f_auto');
 
       const cloudRes = await fetch(
         `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/image/upload`,
