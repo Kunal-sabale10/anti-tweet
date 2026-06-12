@@ -14,24 +14,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
+    // ALWAYS normalize email to lowercase before storing
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Password validation
     if (password.length < 8) {
       return NextResponse.json({ error: 'Password must be at least 8 characters long' }, { status: 400 });
     }
 
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    // Check if email already exists
+    const existingUser = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (existingUser) {
-      return NextResponse.json({ error: 'Email already in use' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'An account with this email already exists. Please log in instead.' },
+        { status: 400 }
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
       data: {
-        email,
-        phone,
+        email: normalizedEmail, // Always store lowercase
+        phone: phone?.trim() || null,
         passwordHash,
-        subscription: 'FREE', // Always FREE — never trust client-supplied subscription tier
+        subscription: 'FREE',
         language: language || 'EN',
       }
     });
