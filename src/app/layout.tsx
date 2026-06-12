@@ -8,10 +8,14 @@ import { Providers } from "@/components/Providers";
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
-  themeColor: '#0f172a',
+  minimumScale: 1,
+  maximumScale: 5,  // allow pinch zoom like Twitter/X
+  userScalable: true,
+  viewportFit: 'cover', // critical for iPhone notch / Dynamic Island
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#0f172a' },
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+  ],
 };
 
 export const metadata: Metadata = {

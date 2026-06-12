@@ -586,12 +586,249 @@ a {
    RESPONSIVE — Mobile / Tablet / Laptop
    ══════════════════════════════════════════════ */
 
+/* ─── Smooth scrolling + GPU acceleration globally ─── */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  /* Prevent iOS rubber-band scroll lag */
+  overscroll-behavior: none;
+  /* Improve rendering on mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── All buttons — eliminate 300ms tap delay on mobile ─── */
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Inputs — prevent iOS auto-zoom (must be 16px+) ─── */
+input, textarea, select {
+  font-size: 16px !important;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+input[type="search"] { border-radius: 9999px; }
+
+/* ─── Scrollable containers — GPU-accelerated momentum scroll ─── */
+.x-main,
+.x-sidebar,
+.x-settings-nav,
+.x-settings-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* ─── Tweet cards — use CSS containment to speed up list scroll ─── */
+.tweet-card {
+  contain: layout style paint;
+  transform: translateZ(0);
+}
+
 /* ── Desktop (≥ 1271px): full sidebar + right panel ── */
 @media (min-width: 1271px) {
   .x-mobile-top-bar { display: none; }
   .x-mobile-nav     { display: none; }
   .x-mobile-fab     { display: none; }
 }
+
+/* ── Laptop (1025–1270px): icon-only sidebar, no right panel labels ── */
+@media (max-width: 1270px) {
+  .x-sidebar { width: 72px; padding: 0 8px; }
+  .x-nav-item { padding: 12px; gap: 0; justify-content: center; border-radius: 9999px; }
+  .x-nav-item .x-nav-label { display: none; }
+  .x-post-btn .x-post-label { display: none; }
+  .x-post-btn { width: 50px; height: 50px; padding: 0; border-radius: 9999px; }
+  .x-account-btn .x-account-info { display: none; }
+  .x-account-btn .x-account-more { display: none; }
+  .x-account-btn { justify-content: center; padding: 8px; }
+  .x-sidebar-wordmark-text { display: none; }
+}
+
+/* ── Hide right panel on smaller desktops ── */
+@media (max-width: 1150px) {
+  .x-right { display: none; }
+}
+
+/* ── Tablet / Mobile (≤ 1024px): sidebar hidden, top bar + bottom nav ── */
+@media (max-width: 1024px) {
+  .x-sidebar { display: none; }
+  .x-main {
+    max-width: 100%;
+    border: none;
+    padding-top: 0;
+    /* Bottom padding = nav height + safe area */
+    padding-bottom: calc(56px + env(safe-area-inset-bottom) + 12px);
+  }
+
+  /* ─── Mobile Top Bar ─── */
+  .x-mobile-top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: 53px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    gap: 12px;
+    /* GPU layer — prevent repaint during scroll */
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  [data-theme='light'] .x-mobile-top-bar {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  /* ─── Bottom Navigation Bar ─── */
+  .x-mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* Account for iPhone home indicator */
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--background);
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 100;
+    /* GPU layer — absolutely critical for smooth scrolling behind it */
+    will-change: transform;
+    transform: translateZ(0);
+    /* Slightly taller nav like X */
+    height: auto;
+    min-height: 56px;
+  }
+
+  /* ─── Bottom nav tap targets ─── */
+  .x-mobile-nav > a {
+    /* Minimum 44px touch target per Apple HIG */
+    min-height: 44px;
+    padding: 8px 16px !important;
+  }
+
+  /* ─── Floating Compose Button (FAB) ─── */
+  .x-mobile-fab {
+    position: fixed;
+    /* Above nav bar + safe area */
+    bottom: calc(64px + env(safe-area-inset-bottom));
+    right: 16px;
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    box-shadow: 0 4px 24px rgba(59, 130, 246, 0.55);
+    transition: transform 0.15s ease, background 0.15s ease;
+    /* GPU layer */
+    will-change: transform;
+    transform: translateZ(0);
+  }
+
+  .x-mobile-fab:active {
+    transform: scale(0.93) translateZ(0);
+    background: var(--accent-hover);
+  }
+}
+
+/* ── Phone (≤ 640px): tighten everything for small screens ── */
+@media (max-width: 640px) {
+  /* Reduce padding on glass panels */
+  .glass-panel { padding: 1rem !important; }
+
+  /* Full-bleed tweet compose — no rounded corners */
+  .x-tweet-compose {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Full-width inputs */
+  input, select, textarea { max-width: 100%; }
+
+  /* Settings: stack panels vertically */
+  .x-settings-layout { flex-direction: column; }
+  .x-settings-nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--card-border);
+    padding-top: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    /* Hide scrollbar but keep scroll */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .x-settings-nav::-webkit-scrollbar { display: none; }
+
+  .x-settings-nav-item {
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    font-size: 0.75rem;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+  .x-settings-nav-item.active {
+    border-left: none;
+    border-bottom-color: var(--accent);
+  }
+  .x-settings-content { min-width: 0; }
+
+  /* Tweet header — tighten text */
+  .x-header-title { font-size: 1.125rem; }
+
+  /* Widget title — slightly smaller */
+  .x-widget-title { font-size: 1.125rem; }
+
+  /* Reduce gap in follow items */
+  .x-follow-item { padding: 10px 12px; gap: 10px; }
+
+  /* Compact trend items */
+  .x-trend-item { padding: 10px 12px; }
+
+  /* Settings row spacing */
+  .x-settings-row { padding: 14px 12px; }
+}
+
+/* ── Tiny phones (≤ 380px): Galaxy A series, older iPhones ── */
+@media (max-width: 380px) {
+  .x-mobile-top-bar { padding: 0 12px; height: 50px; }
+  .x-mobile-fab { right: 12px; width: 52px; height: 52px; }
+  .x-mobile-nav > a { padding: 8px 10px !important; }
+}
+
+/* ── Desktop — hide mobile-only elements ── */
+@media (min-width: 1025px) {
+  .x-mobile-nav     { display: none; }
+  .x-mobile-top-bar { display: none; }
+  .x-mobile-fab     { display: none; }
+}
+
 
 /* ── Laptop (1025–1270px): icon-only sidebar, no right panel labels ── */
 @media (max-width: 1270px) {
