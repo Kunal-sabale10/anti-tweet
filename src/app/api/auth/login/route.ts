@@ -49,6 +49,8 @@ export async function POST(req: Request) {
     }
 
     // 2. Browser logic
+    // Disabled OTP check temporarily because mock email only logs to server console, blocking actual users
+    /*
     if (browserType.includes('Chrome')) {
       // Generate OTP
       const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -66,15 +68,15 @@ export async function POST(req: Request) {
 
       await sendOTP(user.email || '', code);
 
-      // Return stating OTP is required, pass session tracking data briefly to next step
       return NextResponse.json({ 
         requiresOtp: true, 
         userId: user.id,
         sessionData: { browserType, osType, deviceCat, ipAddress }
       });
     }
+    */
 
-    // For Edge (and assuming others), just bypass OTP and log in natively.
+    // Bypass OTP and log in natively.
     await prisma.loginSession.create({
       data: {
         userId: user.id,
