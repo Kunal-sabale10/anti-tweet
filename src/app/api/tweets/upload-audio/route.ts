@@ -1,9 +1,17 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errors';
+
+
+if (process.env.CLOUDINARY_URL) {
+  cloudinary.config({ secure: true });
+}
 
 export async function POST(req: Request) {
   try {
@@ -38,27 +46,44 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Audio file exceeds 100MB.' }, { status: 413 });
     }
 
-    // 3. Save File (Mocking a real upload, saving to public/uploads)
+    // 3. Save File
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const uploadDir = join(process.cwd(), 'public', 'uploads');
-    // Ensure directory exists
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch {}
+    // 1. Cloudinary Upload Flow (For Vercel)
+    if (process.env.CLOUDINARY_URL) {
+      const base64Data = buffer.toString('base64');
+      const dataUri = `data:${file.type};base64,${base64Data}`;
 
-    const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}.webm`;
-    const path = join(uploadDir, filename);
-    await writeFile(path, buffer);
+      const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+        folder: 'anti_tweet_audio',
+        resource_type: 'auto',
+      });
 
-    // Delete the used OTP
-    await prisma.oTPRequest.delete({ where: { id: otpRequest.id } });
+      // Delete the used OTP
+      await prisma.oTPRequest.delete({ where: { id: otpRequest.id } });
 
-    return NextResponse.json({ 
-      success: true, 
-      url: `/uploads/${filename}` 
-    });
+      return NextResponse.json({ success: true, url: uploadResponse.secure_url });
+    } else {
+      // 2. Local Filesystem Fallback (For local dev)
+      const uploadDir = join(process.cwd(), 'public', 'uploads');
+      // Ensure directory exists
+      try {
+        await mkdir(uploadDir, { recursive: true });
+      } catch {}
+
+      const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}.webm`;
+      const path = join(uploadDir, filename);
+      await writeFile(path, buffer);
+
+      // Delete the used OTP
+      await prisma.oTPRequest.delete({ where: { id: otpRequest.id } });
+
+      return NextResponse.json({
+        success: true,
+        url: `/uploads/${filename}`
+      });
+    }
 
   } catch (error) {
     console.error('Upload Error:', error);

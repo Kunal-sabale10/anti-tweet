@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import nodemailer from 'nodemailer';
@@ -65,7 +67,7 @@ export async function GET(req: Request) {
         html += `<li style="margin-bottom: 10px;"><strong>@${n.fromUser.username}</strong> ${action}. <br/><span style="color: #94a3b8; font-size: 0.9em;">${n.previewText || ''}</span></li>`;
       });
       
-      html += `</ul><a href="http://localhost:3000/notifications" style="display: inline-block; padding: 10px 20px; background: #3b82f6; color: #fff; text-decoration: none; border-radius: 99px;">View Notifications</a></div>`;
+      html += `</ul><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://anti-tweet.vercel.app'}/notifications" style="display: inline-block; padding: 10px 20px; background: #3b82f6; color: #fff; text-decoration: none; border-radius: 99px;">View Notifications</a></div>`;
 
       const info = await transporter.sendMail({
         from: '"Anti-Tweet" <noreply@anti-tweet.com>',

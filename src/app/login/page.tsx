@@ -196,8 +196,7 @@ export default function Login() {
             Session Security Active
           </div>
           <p style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>
-            Your login is being monitored for security. Mobile access is restricted to 10 AM - 1 PM IST. 
-            {requiresOtp ? " Advanced verification triggered due to browser profile." : " Chrome users require OTP."}
+            Your login session is encrypted and monitored for security. All sessions are protected with HTTP-only cookies and JWT authentication.
           </p>
         </div>
         

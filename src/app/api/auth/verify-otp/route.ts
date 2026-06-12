@@ -1,6 +1,7 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getSession, setCookie, signToken } from '@/lib/auth';
+import { getSession, setSessionCookie, signToken } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errors';
 import type { LoginSessionData } from '@/lib/types';
 
@@ -65,10 +66,10 @@ export async function POST(req: Request) {
     }
 
     if (otpType === 'LOGIN') {
-      const token = await signToken({ userId: user.id, email: user.email });
-      await setCookie(token);
-
-      return NextResponse.json({ success: true, redirect: '/dashboard' });
+      const token = signToken({ userId: user.id, email: user.email });
+      const response = NextResponse.json({ success: true, redirect: '/dashboard' });
+      setSessionCookie(response, token);
+      return response;
     }
 
     return NextResponse.json({ success: true });

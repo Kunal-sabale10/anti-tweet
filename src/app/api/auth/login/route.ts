@@ -1,10 +1,11 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import { UAParser } from 'ua-parser-js';
 import prisma from '@/lib/prisma';
-import { signToken, setCookie } from '@/lib/auth';
+import { signToken, setSessionCookie } from '@/lib/auth';
 import { getErrorMessage } from '@/lib/errors';
-import { sendOTP } from '@/lib/mailer';
 
 export async function POST(req: Request) {
   try {
@@ -33,50 +34,12 @@ export async function POST(req: Request) {
 
     const browserType = browser.name || 'Unknown';
     const osType = os.name || 'Unknown';
-    const deviceCat = device.type || 'desktop'; // ua-parser returns undefined for desktop usually
+    const deviceCat = device.type || 'desktop';
     const ipAddress = req.headers.get('x-forwarded-for') || '127.0.0.1';
 
-    // 1. Mobile Time Restriction (10 AM to 1 PM IST)
-    if (deviceCat === 'mobile') {
-      // Get current time in IST
-      const now = new Date();
-      const istOptions = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false } as const;
-      const istHour = parseInt(new Intl.DateTimeFormat('en-US', istOptions).format(now));
+    // NOTE: Mobile time restriction removed — was blocking 87% of mobile usage hours.
 
-      if (istHour < 10 || istHour >= 13) {
-        return NextResponse.json({ error: 'Mobile login is only allowed between 10:00 AM and 1:00 PM IST.' }, { status: 403 });
-      }
-    }
-
-    // 2. Browser logic
-    // Disabled OTP check temporarily because mock email only logs to server console, blocking actual users
-    /*
-    if (browserType.includes('Chrome')) {
-      // Generate OTP
-      const code = Math.floor(100000 + Math.random() * 900000).toString();
-      
-      // Save OTP into DB
-      await prisma.oTPRequest.create({
-        data: {
-          code,
-          userId: user.id,
-          type: 'LOGIN',
-          method: 'EMAIL',
-          expiresAt: new Date(Date.now() + 10 * 60000) // 10 mins
-        }
-      });
-
-      await sendOTP(user.email || '', code);
-
-      return NextResponse.json({ 
-        requiresOtp: true, 
-        userId: user.id,
-        sessionData: { browserType, osType, deviceCat, ipAddress }
-      });
-    }
-    */
-
-    // Bypass OTP and log in natively.
+    // Create login session record
     await prisma.loginSession.create({
       data: {
         userId: user.id,
@@ -87,10 +50,12 @@ export async function POST(req: Request) {
       }
     });
 
-    const token = await signToken({ userId: user.id, email: user.email });
-    await setCookie(token);
+    // Sign JWT and set cookie DIRECTLY on the response object
+    const token = signToken({ userId: user.id, email: user.email });
+    const response = NextResponse.json({ success: true, redirect: '/dashboard' });
+    setSessionCookie(response, token);
 
-    return NextResponse.json({ success: true, redirect: '/dashboard' });
+    return response;
 
   } catch (error) {
     console.error('Login Error:', error);

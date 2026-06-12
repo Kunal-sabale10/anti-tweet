@@ -1,6 +1,8 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { signToken, setCookie } from '@/lib/auth';
+import { signToken, setSessionCookie } from '@/lib/auth';
 
 export async function GET(req: Request) {
   try {
@@ -23,19 +25,21 @@ export async function GET(req: Request) {
           username,
           displayName,
           avatar,
-          passwordHash: 'oauth_dummy_hash', // In reality, OAuth users don't need a password hash
+          passwordHash: 'oauth_dummy_hash',
         }
       });
     }
 
-    const token = await signToken({
+    const token = signToken({
       userId: user.id,
       email: user.email!
     });
 
-    await setCookie(token);
+    // For redirects, set cookie directly on the redirect response
+    const response = NextResponse.redirect(new URL('/dashboard', req.url));
+    setSessionCookie(response, token);
 
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+    return response;
   } catch (error) {
     return NextResponse.redirect(new URL('/?error=oauth_failed', req.url));
   }
