@@ -4,62 +4,10 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { getErrorMessage } from '@/lib/errors';
+import { configureCloudinary } from '@/lib/cloudinary';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-
-// Lazy-load cloudinary only when needed (avoids build-time issues)
-async function uploadToCloudinary(buffer: Buffer, mimeType: string): Promise<string> {
-  const { v2: cloudinary } = await import('cloudinary');
-
-  // Parse CLOUDINARY_URL manually if not auto-parsed
-  const cloudinaryUrl = process.env.CLOUDINARY_URL;
-  if (!cloudinaryUrl) {
-    throw new Error('CLOUDINARY_URL environment variable is not set');
-  }
-
-  // Parse: cloudinary://api_key:api_secret@cloud_name
-  const match = cloudinaryUrl.match(/^cloudinary:\/\/(\d+):([^@]+)@(.+)$/);
-  if (!match) {
-    throw new Error('CLOUDINARY_URL is malformed. Expected: cloudinary://api_key:api_secret@cloud_name');
-  }
-
-  cloudinary.config({
-    cloud_name: match[3],
-    api_key: match[1],
-    api_secret: match[2],
-    secure: true,
-  });
-
-  const base64 = buffer.toString('base64');
-  const dataUri = `data:${mimeType};base64,${base64}`;
-
-  const result = await cloudinary.uploader.upload(dataUri, {
-    folder: 'anti_tweet_avatars',
-    resource_type: 'image',
-    transformation: [
-      { width: 400, height: 400, crop: 'fill', gravity: 'face' }, // auto crop face
-      { quality: 'auto', fetch_format: 'auto' }                   // optimise format/size
-    ],
-  });
-
-  return result.secure_url;
-}
-
-// Local fallback for dev (no Cloudinary)
-async function saveLocally(buffer: Buffer, userId: string, mimeType: string): Promise<string> {
-  const { writeFile, mkdir } = await import('fs/promises');
-  const { join } = await import('path');
-
-  const ext = mimeType.split('/')[1].replace('jpeg', 'jpg');
-  const filename = `${userId}.${ext}`;
-  const avatarDir = join(process.cwd(), 'public', 'avatars');
-
-  await mkdir(avatarDir, { recursive: true });
-  await writeFile(join(avatarDir, filename), buffer);
-
-  return `/avatars/${filename}?t=${Date.now()}`;
-}
 
 export async function POST(req: Request) {
   try {
@@ -76,13 +24,13 @@ export async function POST(req: Request) {
     }
     if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json(
-        { error: `File type "${file.type}" is not allowed. Use JPEG, PNG, WebP, or GIF.` },
+        { error: `File type "${file.type}" not allowed. Use JPEG, PNG, WebP, or GIF.` },
         { status: 400 }
       );
     }
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: `Image is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 5MB.` },
+        { error: `Image too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Maximum is 5 MB.` },
         { status: 413 }
       );
     }
@@ -92,25 +40,45 @@ export async function POST(req: Request) {
 
     let avatarUrl: string;
 
-    if (process.env.CLOUDINARY_URL) {
-      try {
-        avatarUrl = await uploadToCloudinary(buffer, file.type);
-      } catch (cloudErr) {
-        console.error('Cloudinary upload failed:', cloudErr);
-        throw new Error(`Photo upload failed: ${cloudErr instanceof Error ? cloudErr.message : 'Cloudinary error'}`);
-      }
+    const hasCloudinary = !!(
+      process.env.CLOUDINARY_URL ||
+      (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET)
+    );
+
+    if (hasCloudinary) {
+      const cloudinary = await configureCloudinary();
+      const base64 = buffer.toString('base64');
+      const dataUri = `data:${file.type};base64,${base64}`;
+
+      const result = await cloudinary.uploader.upload(dataUri, {
+        folder: 'anti_tweet_avatars',
+        resource_type: 'image',
+        transformation: [
+          { width: 400, height: 400, crop: 'fill', gravity: 'face' },
+          { quality: 'auto', fetch_format: 'auto' },
+        ],
+      });
+
+      avatarUrl = result.secure_url;
     } else {
-      // Local dev fallback
-      avatarUrl = await saveLocally(buffer, session.userId, file.type);
+      // Local dev fallback — dynamic import prevents EROFS on Vercel
+      const { writeFile, mkdir } = await import('fs/promises');
+      const { join } = await import('path');
+      const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
+      const filename = `${session.userId}.${ext}`;
+      const dir = join(process.cwd(), 'public', 'avatars');
+      await mkdir(dir, { recursive: true });
+      await writeFile(join(dir, filename), buffer);
+      avatarUrl = `/avatars/${filename}?t=${Date.now()}`;
     }
 
-    // Persist to database
     await prisma.user.update({
       where: { id: session.userId },
       data: { avatar: avatarUrl },
     });
 
     return NextResponse.json({ success: true, avatarUrl });
+
   } catch (error) {
     console.error('Avatar upload error:', error);
     return NextResponse.json(
@@ -134,7 +102,6 @@ export async function DELETE() {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Avatar remove error:', error);
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to remove photo') },
       { status: 500 }
