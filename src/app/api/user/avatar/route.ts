@@ -4,6 +4,14 @@ import { join } from 'path';
 import { getSession } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { getErrorMessage } from '@/lib/errors';
+import { v2 as cloudinary } from 'cloudinary';
+
+// Configure Cloudinary globally
+if (process.env.CLOUDINARY_URL) {
+  cloudinary.config({
+    secure: true
+  });
+}
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -27,20 +35,34 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save to public/avatars/{userId}.{ext}
-    const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
-    const filename = `${session.userId}.${ext}`;
-    const avatarDir = join(process.cwd(), 'public', 'avatars');
+    let avatarUrl = '';
 
-    await mkdir(avatarDir, { recursive: true });
-    await writeFile(join(avatarDir, filename), buffer);
+    // 1. Cloudinary Upload Flow (For Vercel)
+    if (process.env.CLOUDINARY_URL) {
+      const base64Data = buffer.toString('base64');
+      const dataUri = `data:${file.type};base64,${base64Data}`;
+      
+      const uploadResponse = await cloudinary.uploader.upload(dataUri, {
+        folder: 'anti_tweet_avatars',
+        resource_type: 'auto',
+      });
+      avatarUrl = uploadResponse.secure_url;
+    } else {
+      // 2. Local Fallback Flow (For Localhost without Cloudinary)
+      const ext = file.type.split('/')[1].replace('jpeg', 'jpg');
+      const filename = `${session.userId}.${ext}`;
+      const avatarDir = join(process.cwd(), 'public', 'avatars');
 
-    const avatarUrl = `/avatars/${filename}?t=${Date.now()}`; // cache-bust
+      await mkdir(avatarDir, { recursive: true });
+      await writeFile(join(avatarDir, filename), buffer);
+
+      avatarUrl = `/avatars/${filename}?t=${Date.now()}`; // cache-bust
+    }
 
     // Save URL to DB
     await prisma.user.update({
       where: { id: session.userId },
-      data: { avatar: `/avatars/${filename}` },
+      data: { avatar: avatarUrl },
     });
 
     return NextResponse.json({ success: true, avatarUrl });
