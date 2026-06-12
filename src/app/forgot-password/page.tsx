@@ -71,6 +71,16 @@ export default function ForgotPassword() {
           <p style={{ color: '#71767b', fontSize: '0.85rem', marginBottom: '2rem' }}>
             Check your spam folder if it doesn't appear. Link expires in 15 minutes.
           </p>
+          
+          {result.resetUrl && (
+            <div style={{ marginTop: '1rem', marginBottom: '2rem', padding: '1rem', background: 'rgba(29,155,240,0.05)', border: '1px solid rgba(29,155,240,0.15)', borderRadius: '10px' }}>
+              <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.75rem' }}>Didn't receive the email?</p>
+              <a href={result.resetUrl} style={{ color: '#1d9bf0', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <ExternalLink size={14} /> Use this backup link to reset
+              </a>
+            </div>
+          )}
+
           <Link href="/login" style={{
             display: 'block', padding: '0.875rem', borderRadius: '9999px',
             background: '#e7e9ea', color: '#0f1117', fontWeight: 700,

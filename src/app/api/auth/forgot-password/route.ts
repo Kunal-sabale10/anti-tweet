@@ -101,8 +101,8 @@ export async function POST(req: Request) {
     const emailSent = await trySendEmail(user.email, resetUrl);
 
     if (emailSent) {
-      // Email sent — don't expose the URL in response
-      return NextResponse.json({ success: true, emailSent: true });
+      // Email sent — still return URL to help user out in case of delivery issues
+      return NextResponse.json({ success: true, emailSent: true, resetUrl });
     }
 
     // Email not configured — return the reset URL directly so the user can reset now
