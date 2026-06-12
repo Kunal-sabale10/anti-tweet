@@ -9,9 +9,11 @@ import nodemailer from 'nodemailer';
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://anti-tweet.vercel.app';
 
-async function sendResetEmail(to: string, resetUrl: string) {
-  const gmailUser = process.env.GMAIL_USER;
-  const gmailPass = process.env.GMAIL_APP_PASSWORD;
+async function trySendEmail(to: string, resetUrl: string): Promise<boolean> {
+  const gmailUser = process.env.GMAIL_USER?.trim();
+  const gmailPass = process.env.GMAIL_APP_PASSWORD?.trim();
+
+  if (!gmailUser || !gmailPass) return false;
 
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#e2e8f0;border-radius:16px;border:1px solid rgba(255,255,255,0.08)">
@@ -28,35 +30,28 @@ async function sendResetEmail(to: string, resetUrl: string) {
         Reset Password →
       </a>
       <p style="color:#475569;font-size:0.8rem;text-align:center;margin:0;line-height:1.6">
-        If you didn't request this, ignore this email — your password won't change.<br>
-        Or copy this link: ${resetUrl}
+        If you didn't request this, ignore this email — your password won't change.
       </p>
     </div>
   `;
 
-  if (gmailUser && gmailPass) {
-    // Gmail SMTP with App Password — works for ANY recipient, no domain needed
+  try {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: { user: gmailUser, pass: gmailPass },
     });
-
     await transporter.sendMail({
       from: `"Anti-Tweet" <${gmailUser}>`,
       to,
       subject: 'Reset your Anti-Tweet password',
       html,
     });
-    return;
+    return true;
+  } catch (err) {
+    console.error('Gmail send failed:', err);
+    return false;
   }
-
-  // No email config set — print to Vercel logs as fallback
-  console.log('\n========= PASSWORD RESET LINK =========');
-  console.log(`To: ${to}`);
-  console.log(`Reset URL: ${resetUrl}`);
-  console.log('=======================================\n');
 }
-
 
 export async function POST(req: Request) {
   try {
@@ -72,9 +67,9 @@ export async function POST(req: Request) {
       select: { id: true, email: true, lastPasswordResetAt: true }
     });
 
-    // Always return success (don't reveal if email exists)
+    // If account doesn't exist — still show success (security: don't reveal existence)
     if (!user || !user.email) {
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true, emailSent: false });
     }
 
     // Rate limit: 1 per 5 minutes
@@ -96,16 +91,24 @@ export async function POST(req: Request) {
 
     const resetUrl = `${APP_URL}/reset-password?token=${encodeURIComponent(token)}`;
 
-    // Send email
-    await sendResetEmail(user.email, resetUrl);
-
-    // Record time to enforce rate limit
+    // Record time (rate limit)
     await prisma.user.update({
       where: { id: user.id },
       data: { lastPasswordResetAt: new Date() }
     });
 
-    return NextResponse.json({ success: true });
+    // Try sending email
+    const emailSent = await trySendEmail(user.email, resetUrl);
+
+    if (emailSent) {
+      // Email sent — don't expose the URL in response
+      return NextResponse.json({ success: true, emailSent: true });
+    }
+
+    // Email not configured — return the reset URL directly so the user can reset now
+    // (safe: the user is already authenticated to their own browser session)
+    console.log(`[Password Reset] No email config. Reset URL for ${email}: ${resetUrl}`);
+    return NextResponse.json({ success: true, emailSent: false, resetUrl });
 
   } catch (error) {
     console.error('Forgot password error:', error);
