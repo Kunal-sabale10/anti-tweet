@@ -4,66 +4,59 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getErrorMessage } from '@/lib/errors';
 import jwt from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://anti-tweet.vercel.app';
 
 async function sendResetEmail(to: string, resetUrl: string) {
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-
-  if (!RESEND_API_KEY) {
-    // Dev fallback — print link to Vercel logs
-    console.log('\n========= PASSWORD RESET LINK =========');
-    console.log(`To: ${to}`);
-    console.log(`Link: ${resetUrl}`);
-    console.log('=======================================\n');
-    return;
-  }
+  const gmailUser = process.env.GMAIL_USER;
+  const gmailPass = process.env.GMAIL_APP_PASSWORD;
 
   const html = `
     <div style="font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#e2e8f0;border-radius:16px;border:1px solid rgba(255,255,255,0.08)">
       <div style="text-align:center;margin-bottom:28px">
-        <span style="font-size:2rem;font-weight:900;background:linear-gradient(135deg,#3b82f6,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px">Anti-Tweet</span>
+        <span style="font-size:2rem;font-weight:900;color:#3b82f6;letter-spacing:-1px">Anti-Tweet</span>
       </div>
       <h2 style="font-size:1.4rem;font-weight:700;margin:0 0 10px;color:#f1f5f9">Reset your password</h2>
       <p style="color:#94a3b8;margin:0 0 24px;line-height:1.6;font-size:0.95rem">
         We received a request to reset the password for <strong style="color:#e2e8f0">${to}</strong>.<br>
-        Click below to set a new password. This link expires in <strong style="color:#3b82f6">15 minutes</strong>.
+        Click the button below — this link expires in <strong style="color:#3b82f6">15 minutes</strong>.
       </p>
       <a href="${resetUrl}"
-        style="display:block;text-align:center;padding:14px 24px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border-radius:9999px;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:24px;box-shadow:0 4px 20px rgba(59,130,246,0.4)">
+        style="display:block;text-align:center;padding:14px 24px;background:#3b82f6;color:#fff;border-radius:9999px;font-weight:700;font-size:1rem;text-decoration:none;margin-bottom:24px">
         Reset Password →
       </a>
       <p style="color:#475569;font-size:0.8rem;text-align:center;margin:0;line-height:1.6">
         If you didn't request this, ignore this email — your password won't change.<br>
-        This link can only be used once.
-      </p>
-      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.08);margin:20px 0">
-      <p style="color:#334155;font-size:0.72rem;text-align:center;margin:0">
-        Anti-Tweet · Sent to ${to}
+        Or copy this link: ${resetUrl}
       </p>
     </div>
   `;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: 'Anti-Tweet <onboarding@resend.dev>',
-      to: [to],
+  if (gmailUser && gmailPass) {
+    // Gmail SMTP with App Password — works for ANY recipient, no domain needed
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: gmailUser, pass: gmailPass },
+    });
+
+    await transporter.sendMail({
+      from: `"Anti-Tweet" <${gmailUser}>`,
+      to,
       subject: 'Reset your Anti-Tweet password',
       html,
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json() as { message?: string };
-    throw new Error(`Email sending failed: ${err.message || res.statusText}`);
+    });
+    return;
   }
+
+  // No email config set — print to Vercel logs as fallback
+  console.log('\n========= PASSWORD RESET LINK =========');
+  console.log(`To: ${to}`);
+  console.log(`Reset URL: ${resetUrl}`);
+  console.log('=======================================\n');
 }
+
 
 export async function POST(req: Request) {
   try {
