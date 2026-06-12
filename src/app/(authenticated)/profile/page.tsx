@@ -151,7 +151,7 @@ export default function ProfilePage() {
     setUploadError('');
     setShowPhotoMenu(false);
 
-    // Validate client-side
+    // Client-side validation
     if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) {
       setUploadError('Only JPEG, PNG, WebP or GIF allowed.');
       return;
@@ -164,23 +164,55 @@ export default function ProfilePage() {
     // Show local preview immediately
     const objectUrl = URL.createObjectURL(file);
     setPreview(objectUrl);
-
-    // Upload
     setUploading(true);
+
     try {
+      // ── Step 1: Get a signed upload signature from our server ──────────────
+      const sigRes = await fetch('/api/upload/signature?folder=anti_tweet_avatars');
+      const sigData = await sigRes.json() as {
+        signature?: string; timestamp?: number;
+        api_key?: string; cloud_name?: string; folder?: string; error?: string;
+      };
+      if (!sigRes.ok || !sigData.signature) {
+        throw new Error(sigData.error || 'Could not get upload credentials');
+      }
+
+      // ── Step 2: Upload file DIRECTLY to Cloudinary from the browser ────────
+      // File never touches Vercel — goes straight browser → Cloudinary
       const fd = new FormData();
-      fd.append('avatar', file);
-      const res = await fetch('/api/user/avatar', { method: 'POST', body: fd });
-      const data = await res.json() as { avatarUrl?: string; error?: string };
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
-      setAvatarUrl(data.avatarUrl || null);
+      fd.append('file', file);
+      fd.append('api_key', sigData.api_key!);
+      fd.append('timestamp', String(sigData.timestamp));
+      fd.append('signature', sigData.signature);
+      fd.append('folder', sigData.folder!);
+      fd.append('transformation', 'c_fill,g_face,h_400,w_400/q_auto,f_auto');
+
+      const cloudRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/image/upload`,
+        { method: 'POST', body: fd }
+      );
+      const cloudData = await cloudRes.json() as { secure_url?: string; error?: { message: string } };
+
+      if (!cloudRes.ok || !cloudData.secure_url) {
+        throw new Error(cloudData.error?.message || 'Cloudinary upload failed');
+      }
+
+      // ── Step 3: Save the Cloudinary URL to our database ───────────────────
+      const saveRes = await fetch('/api/user/avatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ avatarUrl: cloudData.secure_url }),
+      });
+      const saveData = await saveRes.json() as { avatarUrl?: string; error?: string };
+      if (!saveRes.ok) throw new Error(saveData.error || 'Failed to save photo');
+
+      setAvatarUrl(saveData.avatarUrl || cloudData.secure_url);
       setPreview(null);
     } catch (err: unknown) {
-      setUploadError(err instanceof Error ? err.message : 'Upload failed');
+      setUploadError(err instanceof Error ? err.message : 'Upload failed. Please try again.');
       setPreview(null);
     } finally {
       setUploading(false);
-      // Reset input so same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
