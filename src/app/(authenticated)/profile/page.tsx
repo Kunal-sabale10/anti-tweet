@@ -167,33 +167,29 @@ export default function ProfilePage() {
     setUploading(true);
 
     try {
-      // ── Step 1: Get a signed upload signature from our server ──────────────
-      const sigRes = await fetch('/api/upload/signature?folder=anti_tweet_avatars');
-      const sigData = await sigRes.json() as {
-        signature?: string; timestamp?: number;
-        api_key?: string; cloud_name?: string; folder?: string; error?: string;
+      // ── Step 1: Get Cloudinary config (cloud_name + upload_preset) ─────────
+      const cfgRes = await fetch('/api/upload/config');
+      const cfgData = await cfgRes.json() as {
+        cloud_name?: string; upload_preset?: string; error?: string;
       };
-      if (!sigRes.ok || !sigData.signature) {
-        throw new Error(sigData.error || 'Could not get upload credentials');
+      if (!cfgRes.ok || !cfgData.cloud_name) {
+        throw new Error(cfgData.error || 'Could not get upload config');
       }
 
-      // ── Step 2: Upload file DIRECTLY to Cloudinary from the browser ────────
-      // File never touches Vercel — goes straight browser → Cloudinary
+      // ── Step 2: Upload DIRECTLY to Cloudinary — UNSIGNED (no API key needed)
       const fd = new FormData();
       fd.append('file', file);
-      fd.append('api_key', sigData.api_key!);
-      fd.append('timestamp', String(sigData.timestamp));
-      fd.append('signature', sigData.signature!);
-      fd.append('folder', sigData.folder!);
+      fd.append('upload_preset', cfgData.upload_preset!);
+      fd.append('folder', 'anti_tweet_avatars');
 
       const cloudRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${sigData.cloud_name}/image/upload`,
+        `https://api.cloudinary.com/v1_1/${cfgData.cloud_name}/image/upload`,
         { method: 'POST', body: fd }
       );
       const cloudData = await cloudRes.json() as { secure_url?: string; error?: { message: string } };
 
       if (!cloudRes.ok || !cloudData.secure_url) {
-        throw new Error(cloudData.error?.message || 'Cloudinary upload failed');
+        throw new Error(cloudData.error?.message || 'Upload to Cloudinary failed');
       }
 
       // ── Step 3: Save the Cloudinary URL to our database ───────────────────
