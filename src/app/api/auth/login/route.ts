@@ -15,14 +15,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (!user) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: 'No account found with this email address.' }, { status: 401 });
     }
 
     const match = await bcrypt.compare(password, user.passwordHash);
     if (!match) {
-      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+      return NextResponse.json({ error: 'Incorrect password. Please try again.' }, { status: 401 });
     }
 
     // Environmental Checks
