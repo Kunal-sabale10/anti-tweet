@@ -19,6 +19,11 @@ const englishTranslations = {
   audio_window: 'Audio window: 14:00 - 19:00 IST',
   verify_identity: 'Verify Identity',
   password_reset: 'Reset Password',
+  bookmarks: 'Bookmarks',
+  premium: 'Premium',
+  more: 'More',
+  security: 'Security',
+  display: 'Display',
 };
 
 export type TranslationKey = keyof typeof englishTranslations;
@@ -45,6 +50,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     audio_window: 'Ventana de audio: 14:00 - 19:00 IST',
     verify_identity: 'Verificar Identidad',
     password_reset: 'Restablecer Contraseña',
+    bookmarks: 'Guardados',
+    premium: 'Premium',
+    more: 'Más',
+    security: 'Seguridad',
+    display: 'Pantalla',
   },
   FR: {
     welcome: 'Bon retour',
@@ -65,6 +75,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     audio_window: 'Fenêtre audio : 14h00 - 19h00 IST',
     verify_identity: "Vérifier l'identité",
     password_reset: 'Réinitialiser le mot de passe',
+    bookmarks: 'Signets',
+    premium: 'Premium',
+    more: 'Plus',
+    security: 'Sécurité',
+    display: 'Affichage',
   },
   HI: {
     welcome: 'वापसी पर स्वागत है',
@@ -85,6 +100,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     audio_window: 'ऑडियो विंडो: दोपहर 2:00 - शाम 7:00 IST',
     verify_identity: 'पहचान सत्यापित करें',
     password_reset: 'पासवर्ड बदलें',
+    bookmarks: 'बुकमार्क',
+    premium: 'प्रीमियम',
+    more: 'अधिक',
+    security: 'सुरक्षा',
+    display: 'डिस्प्ले',
   },
   PT: {
     welcome: 'Bem-vindo de volta',
@@ -104,7 +124,12 @@ export const translations: Record<Language, TranslationDictionary> = {
     audio_tweet: 'Tweet de Áudio',
     audio_window: 'Janela de áudio: 14:00 - 19:00 IST',
     verify_identity: 'Verificar Identidade',
-    password_reset: 'Redefinir Senha',
+    password_reset: 'Redefinir senha',
+    bookmarks: 'Itens salvos',
+    premium: 'Premium',
+    more: 'Mais',
+    security: 'Segurança',
+    display: 'Tela',
   },
   ZH: {
     welcome: '欢迎回来',
@@ -125,5 +150,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     audio_window: '语音窗口：IST 14:00 - 19:00',
     verify_identity: '身份验证',
     password_reset: '重置密码',
+    bookmarks: '书签',
+    premium: '高级版',
+    more: '更多',
+    security: '安全',
+    display: '显示',
   },
 };

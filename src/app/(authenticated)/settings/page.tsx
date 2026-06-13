@@ -10,6 +10,8 @@ import { useTheme } from 'next-themes';
 import { getErrorMessage } from '@/lib/errors';
 import type { ApiErrorResponse } from '@/lib/types';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/lib/LanguageContext';
+import type { Language } from '@/lib/i18n';
 
 type Section =
   | 'root'
@@ -100,6 +102,11 @@ export default function SettingsPage() {
   const [resetStep, setResetStep] = useState<null | 'OTP' | 'NEW_PASSWORD'>(null);
   const [resetOtp, setResetOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
+
+  const { setLanguage, t } = useLanguage();
+  const [showLangOtp, setShowLangOtp] = useState(false);
+  const [langOtpCode, setLangOtpCode] = useState('');
+  const [pendingLang, setPendingLang] = useState<Language | ''>('');
 
   useEffect(() => { fetchSettings(); }, []);
 
@@ -223,13 +230,74 @@ export default function SettingsPage() {
     window.location.href = '/login';
   };
 
+  const handleLanguageChangeInit = async (newLang: string) => {
+    if (newLang === form.language) return;
+    setPendingLang(newLang as Language);
+    setSaving(true);
+    setError('');
+    
+    try {
+      const res = await fetch('/api/user/language-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: newLang })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      
+      setShowLangOtp(true);
+      if (data.mockSmsCode) {
+        showSuccess(data.message);
+      } else {
+        showSuccess('OTP sent to your email.');
+      }
+    } catch (e) {
+      setError(getErrorMessage(e, 'Failed to trigger language change'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleVerifyLangOtp = async () => {
+    setSaving(true);
+    setError('');
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: 'current', code: langOtpCode, type: 'LANGUAGE' })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Invalid OTP');
+
+      // OTP verified successfully. Now patch settings.
+      const saveRes = await fetch('/api/user/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ language: pendingLang })
+      });
+      if (!saveRes.ok) throw new Error('Failed to save language setting');
+
+      setForm(p => ({ ...p, language: pendingLang }));
+      setLanguage(pendingLang as Language);
+      showSuccess('Language updated successfully');
+      setShowLangOtp(false);
+      setLangOtpCode('');
+      setPendingLang('');
+    } catch (e) {
+      setError(getErrorMessage(e, 'Failed to verify language OTP'));
+    } finally {
+      setSaving(false);
+    }
+  };
+
   // ─── Left nav items ───
   const navItems = [
-    { id: 'account' as Section, label: 'Your account', icon: User },
-    { id: 'security' as Section, label: 'Security and account access', icon: ShieldCheck },
-    { id: 'privacy' as Section, label: 'Privacy and safety', icon: Lock },
-    { id: 'notifications' as Section, label: 'Notifications', icon: Bell },
-    { id: 'display' as Section, label: 'Accessibility, display, and languages', icon: Globe },
+    { id: 'account' as Section, label: t('profile'), icon: User },
+    { id: 'security' as Section, label: t('security'), icon: ShieldCheck },
+    { id: 'privacy' as Section, label: t('settings'), icon: Lock },
+    { id: 'notifications' as Section, label: t('notifications'), icon: Bell },
+    { id: 'display' as Section, label: t('display'), icon: Globe },
   ];
 
   if (loading) return (
@@ -564,7 +632,7 @@ export default function SettingsPage() {
             <div style={{ padding: '16px' }}>
               <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '8px' }}>Display language</div>
               <p style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '16px' }}>Select the language you want to use on X.</p>
-              <select value={form.language} onChange={e => { setForm(p => ({ ...p, language: e.target.value })); handleSave({ language: e.target.value }); }} className="x-input">
+              <select value={form.language} onChange={e => handleLanguageChangeInit(e.target.value)} className="x-input">
                 <option value="EN">English</option>
                 <option value="HI">Hindi</option>
                 <option value="ES">Spanish</option>
@@ -572,6 +640,33 @@ export default function SettingsPage() {
                 <option value="ZH">Chinese</option>
                 <option value="FR">French</option>
               </select>
+
+              {showLangOtp && (
+                <div style={{ marginTop: '16px', padding: '16px', border: '1px solid var(--accent)', borderRadius: '12px', background: 'rgba(29, 155, 240, 0.05)' }}>
+                  <div style={{ fontWeight: 600, marginBottom: '8px' }}>Verify Identity to Change Language</div>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '12px' }}>
+                    {pendingLang === 'FR' 
+                      ? 'Please enter the 6-digit OTP sent to your registered email address.' 
+                      : 'Please enter the 6-digit OTP sent to your registered mobile number.'}
+                  </p>
+                  <input
+                    type="text"
+                    value={langOtpCode}
+                    onChange={e => setLangOtpCode(e.target.value)}
+                    placeholder="Enter 6-digit code"
+                    className="x-input"
+                    style={{ marginBottom: '12px' }}
+                  />
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button className="btn btn-primary" onClick={handleVerifyLangOtp} disabled={saving || langOtpCode.length < 4} style={{ padding: '8px 16px', flex: 1 }}>
+                      {saving ? 'Verifying...' : 'Verify'}
+                    </button>
+                    <button className="btn btn-secondary" onClick={() => { setShowLangOtp(false); setPendingLang(''); }} style={{ padding: '8px 16px', flex: 1 }}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

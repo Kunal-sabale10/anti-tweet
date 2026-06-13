@@ -173,14 +173,14 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
 
   // Twitter/X primary nav — top 8 most used
   const primaryNav = [
-    { name: 'Home', href: '/dashboard', icon: Home },
-    { name: 'Explore', href: '/explore', icon: Hash },
-    { name: 'Notifications', href: '/notification', icon: Bell },
-    { name: 'Messages', href: '/messages', icon: MessageSquare },
-    { name: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
-    { name: 'Premium', href: '/premium', icon: Star },
-    { name: 'Profile', href: '/profile', icon: User },
-    { name: 'More', href: '#', icon: MoreHorizontal },
+    { name: t('home'), href: '/dashboard', icon: Home },
+    { name: t('explore'), href: '/explore', icon: Hash },
+    { name: t('notifications'), href: '/notification', icon: Bell },
+    { name: t('messages'), href: '/messages', icon: MessageSquare },
+    { name: t('bookmarks'), href: '/bookmarks', icon: Bookmark },
+    { name: t('premium'), href: '/premium', icon: Star },
+    { name: t('profile'), href: '/profile', icon: User },
+    { name: t('more'), href: '#', icon: MoreHorizontal },
   ];
 
   // Secondary items accessible via "More" or direct URL
