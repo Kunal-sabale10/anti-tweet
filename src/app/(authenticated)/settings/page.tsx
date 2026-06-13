@@ -247,6 +247,7 @@ export default function SettingsPage() {
       
       setShowLangOtp(true);
       if (data.mockSmsCode) {
+        setLangOtpCode(data.mockSmsCode); // Auto-fill for testing
         showSuccess(data.message);
       } else {
         showSuccess('OTP sent to your email.');

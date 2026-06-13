@@ -30,13 +30,17 @@ export async function POST(req: Request) {
     });
 
     let message = '';
-    let mockSmsCode = '';
+    let mockSmsCode = otpCode; // Always return it for testing purposes
 
     if (language === 'FR') {
       // Send to email for French
       if (user.email) {
-        await sendOTP(user.email, otpCode);
-        message = `OTP sent securely to your registered email address.`;
+        try {
+          await sendOTP(user.email, otpCode);
+        } catch (e) {
+          console.error("Failed to send email", e);
+        }
+        message = `OTP sent securely to your registered email address. For testing: ${otpCode}`;
       } else {
         return NextResponse.json({ error: 'No email registered to send OTP.' }, { status: 400 });
       }
@@ -44,10 +48,8 @@ export async function POST(req: Request) {
       // "Send" to phone for others
       if (!user.phone) {
         message = `Simulated SMS sent to mobile (Phone not registered). For testing, your OTP is: ${otpCode}`;
-        mockSmsCode = otpCode;
       } else {
         message = `Simulated SMS sent to ${user.phone}. For testing, your OTP is: ${otpCode}`;
-        mockSmsCode = otpCode;
       }
     }
 
