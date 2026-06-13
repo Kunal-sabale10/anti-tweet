@@ -24,7 +24,7 @@ export default function PremiumPage() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+      <div className="premium-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
         
         {/* Free Tier */}
         <div style={{ padding: '1.5rem', borderRadius: '16px', border: '1px solid var(--card-border)', background: 'var(--card-bg)' }}>

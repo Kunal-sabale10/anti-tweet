@@ -23,7 +23,7 @@ export default function HelpCenter() {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="help-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         {[
           { icon: <Settings size={20} />, title: "Managing your account", desc: "Learn about account settings, privacy, and password resets." },
           { icon: <MessageCircle size={20} />, title: "Using Anti-Tweet", desc: "How to post, reply, retweet, and use the platform." },

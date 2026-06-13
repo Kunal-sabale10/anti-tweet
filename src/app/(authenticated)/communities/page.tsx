@@ -80,7 +80,7 @@ export default function CommunitiesPage() {
             <button onClick={() => setShowCreate(true)} className="btn btn-primary">Create Community</button>
           </motion.div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+          <div className="cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
             {communities.map((c, i) => (
               <motion.div
                 key={c.id}
@@ -136,7 +136,7 @@ export default function CommunitiesPage() {
       {/* Create Modal */}
       <AnimatePresence>
         {showCreate && (
-          <div style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div className="modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setShowCreate(false)}
@@ -144,7 +144,7 @@ export default function CommunitiesPage() {
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }}
-              className="glass-panel"
+              className="glass-panel modal-panel"
               style={{ width: '100%', maxWidth: 480, position: 'relative', padding: '1.5rem' }}
             >
               <button onClick={() => setShowCreate(false)} style={{ position: 'absolute', right: '1rem', top: '1rem', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
@@ -175,7 +175,7 @@ export default function CommunitiesPage() {
                     style={{ width: '100%', resize: 'vertical' }}
                   />
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
+                <div className="modal-action-row" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
                   <button type="button" onClick={() => setShowCreate(false)} className="btn btn-secondary" disabled={creating}>Cancel</button>
                   <button type="submit" className="btn btn-primary" disabled={creating || !form.name.trim()}>
                     {creating ? 'Creating...' : 'Create Community'}

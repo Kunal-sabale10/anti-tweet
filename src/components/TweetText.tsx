@@ -9,7 +9,7 @@ export default function TweetText({ content }: { content: string }) {
   const parts = content.split(regex);
 
   return (
-    <p style={{ fontSize: '1rem', lineHeight: '1.5', color: '#e2e8f0', marginBottom: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+    <p className="tweet-text" style={{ fontSize: '0.9375rem', lineHeight: '1.5', color: '#e2e8f0', marginBottom: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
       {parts.map((part, i) => {
         if (part.startsWith('#')) {
           return (

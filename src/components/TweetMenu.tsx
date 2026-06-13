@@ -158,9 +158,9 @@ export default function TweetMenu({ tweetId, isOwner, subscription, createdAt, i
 
       {/* Edit Modal */}
       {showEdit && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowEdit(false)}>
+        <div className="modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowEdit(false)}>
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} />
-          <div className="glass-panel" style={{ position: 'relative', width: '100%', maxWidth: '520px', padding: '1.5rem' }} onClick={e => e.stopPropagation()}>
+          <div className="glass-panel modal-panel" style={{ position: 'relative', width: '100%', maxWidth: '520px', padding: '1.5rem' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ margin: '0 0 1rem', fontWeight: 800 }}>✏️ Edit Post</h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--muted)', marginBottom: '1rem' }}>Premium edit — changes are permanent and visible to everyone.</p>
             <textarea
@@ -172,7 +172,7 @@ export default function TweetMenu({ tweetId, isOwner, subscription, createdAt, i
               style={{ width: '100%', resize: 'vertical', marginBottom: '1rem' }}
               autoFocus
             />
-            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+            <div className="modal-action-row" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
               <button onClick={() => setShowEdit(false)} className="btn btn-secondary" disabled={editing}>Cancel</button>
               <button onClick={handleEditSubmit} className="btn btn-primary" disabled={editing || !editContent.trim()}>
                 {editing ? 'Saving...' : 'Save edit'}
@@ -184,13 +184,13 @@ export default function TweetMenu({ tweetId, isOwner, subscription, createdAt, i
 
       {/* Analytics Modal */}
       {showAnalytics && analytics && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowAnalytics(false)}>
+        <div className="modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setShowAnalytics(false)}>
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} />
-          <div className="glass-panel" style={{ position: 'relative', width: '100%', maxWidth: '480px', padding: '1.5rem' }} onClick={e => e.stopPropagation()}>
+          <div className="glass-panel modal-panel" style={{ position: 'relative', width: '100%', maxWidth: '480px', padding: '1.5rem' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ margin: '0 0 1.5rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <BarChart2 size={20} /> Post Analytics
             </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div className="analytics-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
               {[
                 { label: 'Impressions', value: analytics.impressions?.toLocaleString(), icon: '👁️' },
                 { label: 'Engagements', value: analytics.engagements?.toLocaleString(), icon: '⚡' },

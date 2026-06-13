@@ -457,10 +457,22 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
           }}>Anti-Tweet</span>
         </Link>
-        {/* Right: avatar */}
-        <div className="x-avatar" style={{ background: avatarBg, width: 32, height: 32, fontSize: '0.8rem', cursor: 'pointer' }}>
-          {avatarInitial}
-        </div>
+        <Link
+          href="/explore"
+          aria-label="Search"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: '9999px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--muted)',
+            textDecoration: 'none',
+          }}
+        >
+          <Search size={22} />
+        </Link>
       </div>
 
       {/* ─── Main Content ─── */}

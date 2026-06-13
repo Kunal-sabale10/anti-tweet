@@ -1,11 +1,13 @@
 "use client";
 import { LanguageProvider } from '@/lib/LanguageContext';
+import { MotionConfig, useReducedMotion } from 'framer-motion';
 import { ThemeProvider } from 'next-themes';
 import { useEffect, useState } from 'react';
 import type { Language } from '@/lib/i18n';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [initialLang, setInitialLang] = useState<Language>('EN');
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     async function getLang() {
@@ -45,7 +47,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider attribute="data-theme" defaultTheme="dark" enableSystem={false}>
       <LanguageProvider initialLanguage={initialLang}>
-        {children}
+        <MotionConfig reducedMotion={shouldReduceMotion ? 'always' : 'never'}>
+          {children}
+        </MotionConfig>
       </LanguageProvider>
     </ThemeProvider>
   );

@@ -32,7 +32,7 @@ export default function TopicsPage() {
         </p>
       </div>
 
-      <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+      <div className="topics-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
         {HARDCODED_TOPICS.map(topic => {
           const isFollowed = followedTopics.includes(topic.id);
           return (

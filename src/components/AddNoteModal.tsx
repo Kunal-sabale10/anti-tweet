@@ -41,7 +41,7 @@ export default function AddNoteModal({ isOpen, onClose, tweetId }: AddNoteModalP
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className="modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <motion.div 
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
@@ -53,7 +53,7 @@ export default function AddNoteModal({ isOpen, onClose, tweetId }: AddNoteModalP
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="glass-panel"
+        className="glass-panel modal-panel"
         style={{ width: '100%', maxWidth: '500px', position: 'relative', padding: '1.5rem' }}
       >
         <button onClick={onClose} style={{ position: 'absolute', right: '1rem', top: '1rem', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
@@ -78,7 +78,7 @@ export default function AddNoteModal({ isOpen, onClose, tweetId }: AddNoteModalP
             required
           />
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+          <div className="modal-action-row" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
             <button type="button" onClick={onClose} className="btn btn-secondary" disabled={loading}>
               Cancel
             </button>

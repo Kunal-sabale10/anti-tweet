@@ -88,12 +88,12 @@ function CheckoutContent() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+    <div className="checkout-page" style={{ minHeight: '100vh', background: '#f8fafc', color: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
       
-      <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', width: '100%', maxWidth: '800px', display: 'flex', overflow: 'hidden' }}>
+      <div className="checkout-card" style={{ background: 'white', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', width: '100%', maxWidth: '800px', display: 'flex', overflow: 'hidden' }}>
         
         {/* Left Side: Order Summary */}
-        <div style={{ flex: 1, padding: '2.5rem', background: '#f1f5f9', borderRight: '1px solid #e2e8f0' }}>
+        <div className="checkout-section" style={{ flex: 1, padding: '2.5rem', background: '#f1f5f9', borderRight: '1px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', color: isGold ? '#eab308' : isSilver ? '#94a3b8' : '#b08d57' }}>
              <ShieldCheck size={28} />
              <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>Stripe <span style={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Test Mode</span></span>
@@ -114,7 +114,7 @@ function CheckoutContent() {
         </div>
 
         {/* Right Side: Mock Payment Form */}
-        <div style={{ flex: 1, padding: '2.5rem' }}>
+        <div className="checkout-section" style={{ flex: 1, padding: '2.5rem' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
              Payment Details <Lock size={16} color="#10b981" />
           </h3>
@@ -123,7 +123,7 @@ function CheckoutContent() {
             <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.5rem', color: '#475569' }}>Card Information</label>
             <div style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#f8fafc' }}>
               <CreditCard size={20} color="#94a3b8" />
-              <span style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '1.1rem', letterSpacing: '2px' }}>4242 4242 4242 4242</span>
+              <span className="checkout-card-number" style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: '1.1rem', letterSpacing: '2px' }}>4242 4242 4242 4242</span>
             </div>
           </div>
 

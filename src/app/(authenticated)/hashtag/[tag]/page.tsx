@@ -204,7 +204,7 @@ function TweetCard({ tweet, index }: { tweet: HashtagTweet; index: number }) {
         </Link>
 
         {/* Actions */}
-        <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.4rem' }}>
+        <div className="hashtag-action-row" style={{ display: 'flex', gap: '0.25rem', marginTop: '0.4rem' }}>
           <div className="ht-action">
             <MessageCircle size={17} />
             {tweet.replyCount > 0 && <span>{tweet.replyCount}</span>}

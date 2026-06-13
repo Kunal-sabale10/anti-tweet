@@ -13,7 +13,7 @@ export default function Home() {
           Anti-Tweet is the premium social platform offering fine-grained controls, rich audio tweets, and exclusive subscription tiers to protect your experience.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem' }}>
+        <div className="home-cta-row" style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem' }}>
           <Link href="/register" style={{ textDecoration: 'none' }}>
             <span className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>Get Started</span>
           </Link>

@@ -212,10 +212,10 @@ export default function HomeFeed() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="feed-page" style={{ display: 'flex', flexDirection: 'column' }}>
       
       {/* Tabs Header */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--card-border)', background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div className="feed-tabs" style={{ display: 'flex', borderBottom: '1px solid var(--card-border)', background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(12px)', position: 'sticky', top: 0, zIndex: 10 }}>
         <button
           onClick={() => setActiveTab('foryou')}
           style={{ flex: 1, padding: '1rem', background: 'none', border: 'none', color: activeTab === 'foryou' ? 'var(--foreground)' : 'var(--muted)', fontWeight: activeTab === 'foryou' ? 700 : 500, cursor: 'pointer', position: 'relative', transition: 'color 0.2s' }}
@@ -233,12 +233,13 @@ export default function HomeFeed() {
       </div>
 
       {/* Composer */}
-      <div style={{ padding: '1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem' }}>
+      <div className="dashboard-composer" style={{ padding: '1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem' }}>
         <div style={{ minWidth: '48px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }} />
         </div>
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <textarea
+            className="dashboard-composer-textarea"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={t('what_is_happening')}
@@ -273,7 +274,7 @@ export default function HomeFeed() {
             </div>
           )}
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem' }}>
+          <div className="dashboard-composer-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '0.75rem' }}>
             <div style={{ display: 'flex', gap: '0.25rem', color: 'var(--accent)' }}>
               <button 
                 onClick={() => { setShowEmoji(!showEmoji); setShowGif(false); }}

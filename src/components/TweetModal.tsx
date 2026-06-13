@@ -305,7 +305,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
   if (!isOpen) return null;
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+    <div className="composer-shell modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
       <motion.div 
         initial={{ opacity: 0 }} 
         animate={{ opacity: 1 }} 
@@ -317,7 +317,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
       <motion.div 
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="glass-panel"
+        className="glass-panel composer-panel modal-panel"
         style={{ width: '100%', maxWidth: '600px', position: 'relative', padding: '1.5rem', maxHeight: '90vh', overflowY: 'auto' }}
       >
         <button onClick={onClose} style={{ position: 'absolute', right: '1rem', top: '1rem', background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer' }}>
@@ -373,7 +373,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        <form className="composer-form" onSubmit={handleSubmit}>
           {/* Article Title field */}
           {isArticle && (
             <input
@@ -385,7 +385,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
             />
           )}
           <textarea 
-            className="input-field" 
+            className="input-field composer-textarea" 
             placeholder={isArticle ? "Write your article..." : "What's happening?"} 
             style={{ width: '100%', minHeight: isArticle ? '250px' : '120px', resize: 'none', background: 'transparent', border: 'none', borderBottom: '1px solid var(--card-border)', borderRadius: 0, paddingLeft: 0, fontSize: '1.1rem' }}
             value={content}
@@ -415,7 +415,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
             <div key={i} style={{ display: 'flex', gap: '1rem', marginTop: '1rem', position: 'relative' }}>
               <div style={{ position: 'absolute', left: '-20px', top: '-20px', bottom: '20px', width: '2px', background: 'var(--card-border)' }} />
               <textarea 
-                className="input-field" 
+                className="input-field composer-textarea" 
                 placeholder="Add another tweet..." 
                 style={{ width: '100%', minHeight: '80px', resize: 'none', background: 'transparent', border: 'none', borderBottom: '1px solid var(--card-border)', borderRadius: 0, paddingLeft: 0, fontSize: '1.1rem' }}
                 value={tContent}
@@ -518,7 +518,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
             )}
           </AnimatePresence>
 
-          <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="composer-actions" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: '0.5rem' }}>
               {!isAudioMode && !requiresOtp && (
                 <button 

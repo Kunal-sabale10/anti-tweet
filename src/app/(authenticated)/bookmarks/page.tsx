@@ -36,10 +36,10 @@ function Avatar({ user, size = 48 }: { user: TweetFeedItem['user']; size?: numbe
 
   if (user?.avatar) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={user.avatar} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }} />;
+    return <img src={user.avatar} alt="" className="tweet-avatar" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }} />;
   }
   return (
-    <div style={{
+    <div className="tweet-avatar" style={{
       width: size, height: size, borderRadius: '50%',
       background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -103,6 +103,7 @@ function TweetCard({ tweet, onLike, onRetweet, onBookmark }: {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, height: 0 }}
       style={{ borderBottom: '1px solid var(--card-border)' }}
+      className="tweet-card"
     >
       {tweet.retweetOf && (
         <div style={{ padding: '0.75rem 1.25rem 0 3.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--muted)', fontSize: '0.8rem', fontWeight: 600 }}>
@@ -131,7 +132,7 @@ function TweetCard({ tweet, onLike, onRetweet, onBookmark }: {
           
           <Link href={`/tweet/${tweet.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
             {(tweet.retweetOf ? tweet.retweetOf.content : tweet.content) && (
-              <p style={{ fontSize: '1rem', lineHeight: '1.5', color: '#e2e8f0', marginBottom: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+              <p className="tweet-text" style={{ fontSize: '0.9375rem', lineHeight: '1.5', color: '#e2e8f0', marginBottom: '0.75rem', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                 {tweet.retweetOf ? tweet.retweetOf.content : tweet.content}
               </p>
             )}
@@ -149,7 +150,7 @@ function TweetCard({ tweet, onLike, onRetweet, onBookmark }: {
             )}
           </Link>
 
-          <div style={{ display: 'flex', gap: '0', marginTop: '0.5rem', maxWidth: '420px', justifyContent: 'space-between' }}>
+          <div className="tweet-action-row" style={{ display: 'flex', gap: '0', marginTop: '0.5rem', maxWidth: '420px', justifyContent: 'space-between' }}>
             <Link href={`/tweet/${tweet.id}`} style={{ textDecoration: 'none' }} className="action-btn-link">
               <button className="action-btn" style={{ color: 'var(--muted)' }}>
                 <MessageCircle size={18} />

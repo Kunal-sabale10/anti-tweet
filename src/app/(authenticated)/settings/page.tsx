@@ -301,7 +301,7 @@ export default function SettingsPage() {
   );
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="x-settings-layout" style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Success Toast */}
       <AnimatePresence>
         {successMsg && (

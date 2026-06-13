@@ -76,7 +76,7 @@ export default function JobsPage() {
 
   return (
     <div className="page-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="route-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Briefcase size={28} color="var(--accent)" /> Anti-Tweet Jobs
@@ -99,7 +99,7 @@ export default function JobsPage() {
       )}
 
       {!isGold && (
-         <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(45deg, rgba(234,179,8,0.1), transparent)' }}>
+         <div className="glass-panel route-callout-row" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(45deg, rgba(234,179,8,0.1), transparent)' }}>
            <div>
              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#eab308' }}>Upgrade to Gold to Post Jobs</h3>
              <p style={{ fontSize: '0.9rem', color: 'var(--muted)', marginTop: '0.25rem' }}>Gold members can post unlimited job listings to millions of users.</p>
@@ -117,7 +117,7 @@ export default function JobsPage() {
         ) : (
           jobs.map(job => (
             <div key={job.id} className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="job-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h2 style={{ fontSize: '1.3rem', fontWeight: 700 }}>{job.title}</h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem', color: 'var(--muted)', fontSize: '0.9rem', flexWrap: 'wrap' }}>
@@ -153,8 +153,8 @@ export default function JobsPage() {
       </div>
 
       {showPostModal && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
-          <div className="glass-panel" style={{ width: '100%', maxWidth: '500px', padding: '1.5rem', position: 'relative' }}>
+        <div className="modal-sheet" style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem', background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+          <div className="glass-panel modal-panel" style={{ width: '100%', maxWidth: '500px', padding: '1.5rem', position: 'relative' }}>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1.5rem' }}>Post a New Job</h2>
             <form onSubmit={handlePostJob} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input required placeholder="Job Title" value={newJob.title} onChange={e => setNewJob({...newJob, title: e.target.value})} className="input-field" />
@@ -164,7 +164,7 @@ export default function JobsPage() {
               <input placeholder="Application URL" type="url" value={newJob.url} onChange={e => setNewJob({...newJob, url: e.target.value})} className="input-field" />
               <textarea required placeholder="Job Description" value={newJob.description} onChange={e => setNewJob({...newJob, description: e.target.value})} className="input-field" style={{ minHeight: '120px', resize: 'vertical' }} />
               
-              <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <div className="modal-action-row" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
                 <button type="button" onClick={() => setShowPostModal(false)} className="btn btn-secondary" style={{ flex: 1 }}>Cancel</button>
                 <button type="submit" disabled={postingJob} className="btn btn-primary" style={{ flex: 1 }}>{postingJob ? 'Posting...' : 'Post Job'}</button>
               </div>

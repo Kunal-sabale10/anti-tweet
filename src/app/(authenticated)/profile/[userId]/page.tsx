@@ -276,7 +276,7 @@ export default function UserProfilePage() {
       </div>
 
       {/* Banner */}
-      <div style={{
+      <div className="profile-cover" style={{
         height: 160,
         background: user.banner
           ? `url(${user.banner}) center/cover no-repeat`
@@ -301,19 +301,20 @@ export default function UserProfilePage() {
 
           {/* Avatar with online dot */}
           <motion.div
+            className="profile-avatar-wrap"
             initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200 }}
             style={{ position: 'relative', marginTop: -44 }}
           >
             {user.avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={user.avatar} alt="" style={{
+              <img src={user.avatar} alt="" className="profile-avatar" style={{
                 width: 88, height: 88, borderRadius: '50%', objectFit: 'cover',
                 border: '4px solid var(--background)',
                 boxShadow: `0 0 0 2px ${colors[0]}44, 0 8px 24px rgba(0,0,0,0.4)`,
               }} />
             ) : (
-              <div style={{
+              <div className="profile-avatar" style={{
                 width: 88, height: 88, borderRadius: '50%',
                 background: `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`,
                 border: '4px solid var(--background)',
@@ -337,7 +338,7 @@ export default function UserProfilePage() {
           </motion.div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem' }}>
+          <div className="profile-actions" style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.25rem' }}>
             {isOwnProfile ? (
               <button
                 onClick={() => setEditOpen(true)}
@@ -459,7 +460,7 @@ export default function UserProfilePage() {
         </motion.div>
 
         {/* Stats */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+        <motion.div className="profile-stats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
           style={{ display: 'flex', gap: '1.5rem', marginTop: '0.85rem' }}>
           <div>
             <span style={{ fontWeight: 800, fontSize: '1rem' }}>{user.followingCount}</span>
@@ -496,7 +497,7 @@ export default function UserProfilePage() {
       )}
 
       {/* Posts tab */}
-      <div style={{ borderBottom: '1px solid var(--card-border)' }}>
+      <div className="profile-tabs" style={{ borderBottom: '1px solid var(--card-border)' }}>
         <div style={{ padding: '0.75rem 1.25rem', fontWeight: 700, fontSize: '0.9rem', borderBottom: '2px solid var(--accent)', display: 'inline-block', marginBottom: -1 }}>
           Posts
         </div>
@@ -585,6 +586,7 @@ export default function UserProfilePage() {
       <AnimatePresence>
         {editOpen && (
           <motion.div
+            className="modal-sheet"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             style={{
               position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
@@ -594,6 +596,7 @@ export default function UserProfilePage() {
             onClick={e => { if (e.target === e.currentTarget) setEditOpen(false); }}
           >
             <motion.div
+              className="modal-panel"
               initial={{ scale: 0.92, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0 }}
               style={{

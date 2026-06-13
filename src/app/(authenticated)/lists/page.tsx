@@ -80,7 +80,7 @@ export default function ListsPage() {
       {/* Content */}
       <div style={{ padding: '1rem' }}>
         {loading ? (
-          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+          <div className="cards-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
             {[1, 2, 3].map(i => (
               <div key={i} style={{ height: 120, background: 'rgba(255,255,255,0.03)', borderRadius: '16px', animation: 'pulse 1.5s infinite' }} />
             ))}
@@ -97,7 +97,7 @@ export default function ListsPage() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+          <div className="cards-grid" style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
             {lists.map(list => (
               <Link key={list.id} href={`/lists/${list.id}`} style={{ textDecoration: 'none' }}>
                 <motion.div
@@ -135,6 +135,7 @@ export default function ListsPage() {
       <AnimatePresence>
         {modalOpen && (
           <motion.div
+            className="modal-sheet"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             style={{
               position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000,
@@ -144,6 +145,7 @@ export default function ListsPage() {
             onClick={e => { if (e.target === e.currentTarget) setModalOpen(false); }}
           >
             <motion.div
+              className="modal-panel"
               initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0 }}
               style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '16px', width: '100%', maxWidth: '440px', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.6)' }}
             >

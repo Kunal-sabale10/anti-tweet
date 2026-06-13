@@ -289,7 +289,7 @@ export default function ProfilePage() {
       />
 
       {/* Banner */}
-      <div style={{
+      <div className="profile-cover" style={{
         height: 160,
         background: `linear-gradient(135deg, ${avatarColors[0]}33, ${avatarColors[1]}33, rgba(15,23,42,0.8))`,
         position: 'relative',
@@ -329,6 +329,7 @@ export default function ProfilePage() {
           {/* ── AVATAR with upload overlay ── */}
           <div style={{ position: 'relative', marginTop: '-48px', flexShrink: 0 }}>
             <motion.div
+              className="profile-avatar"
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 200 }}
@@ -526,6 +527,7 @@ export default function ProfilePage() {
 
         {/* Stats Row */}
         <motion.div
+          className="profile-stats"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -585,7 +587,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ borderBottom: '1px solid var(--card-border)', display: 'flex', overflowX: 'auto' }}>
+      <div className="profile-tabs" style={{ borderBottom: '1px solid var(--card-border)', display: 'flex', overflowX: 'auto' }}>
         {([
           { key: 'posts', label: `Posts` },
           { key: 'replies', label: 'Replies' },

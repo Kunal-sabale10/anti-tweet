@@ -625,6 +625,7 @@ function NewDMModal({
 
   return (
     <motion.div
+      className="modal-sheet"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -639,6 +640,7 @@ function NewDMModal({
       onClick={onClose}
     >
       <motion.div
+        className="modal-panel"
         initial={{ scale: 0.94, opacity: 0, y: 16 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.94, opacity: 0, y: 16 }}
@@ -859,10 +861,10 @@ export default function MessagesPage() {
   }, []);
 
   return (
-    <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div className="messages-shell" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
 
       {/* ── Left: Conversation list ─────────────────────────── */}
-      <div style={{
+      <div className={`messages-list-panel ${selectedId ? 'is-chat-selected' : ''}`} style={{
         width: selectedId ? '280px' : '100%',
         minWidth: selectedId ? '280px' : 'unset',
         maxWidth: '100%',
@@ -889,7 +891,7 @@ export default function MessagesPage() {
       </div>
 
       {/* ── Right: Chat area ────────────────────────────────── */}
-      <div style={{ flex: 1, display: selectedId ? 'flex' : 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+      <div className={`messages-chat-panel ${selectedId ? 'is-chat-selected' : ''}`} style={{ flex: 1, display: selectedId ? 'flex' : 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
         {selectedId && selectedConv ? (
           <ChatWindow
             key={selectedId}

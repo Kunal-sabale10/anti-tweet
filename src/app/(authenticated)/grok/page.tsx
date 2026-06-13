@@ -76,7 +76,7 @@ export default function GrokPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--background)' }}>
+    <div className="grok-page" style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--background)' }}>
       {/* Header */}
       <div style={{
         padding: '1rem 1.5rem',
@@ -167,7 +167,7 @@ export default function GrokPage() {
                 animate={{ opacity: 1, y: 0 }}
                 style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}
               >
-                <div style={{
+                <div className="grok-bubble" style={{
                   width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
                   background: msg.role === 'grok'
                     ? 'linear-gradient(135deg, #7c3aed, #3b82f6)'
@@ -202,7 +202,7 @@ export default function GrokPage() {
               animate={{ opacity: 1, y: 0 }}
               style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}
             >
-              <div style={{
+              <div className="grok-bubble" style={{
                 width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
                 background: 'linear-gradient(135deg, #7c3aed, #3b82f6)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
@@ -234,7 +234,7 @@ export default function GrokPage() {
         background: 'rgba(15,23,42,0.85)',
         backdropFilter: 'blur(12px)',
       }}>
-        <div style={{
+        <div className="grok-input-shell" style={{
           maxWidth: 700, margin: '0 auto',
           display: 'flex', gap: '0.75rem', alignItems: 'flex-end',
           background: 'var(--card-bg)', border: '1px solid var(--card-border)',

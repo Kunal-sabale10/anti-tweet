@@ -218,7 +218,7 @@ export default function TweetDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Metadata */}
-        <div style={{ color: 'var(--muted)', fontSize: '0.95rem', paddingBottom: '1rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '0.5rem' }}>
+        <div className="tweet-detail-meta" style={{ color: 'var(--muted)', fontSize: '0.95rem', paddingBottom: '1rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '0.5rem' }}>
           <span>{new Date(tweet.createdAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
           <span>·</span>
           <span>{new Date(tweet.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
@@ -230,14 +230,14 @@ export default function TweetDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         {/* Counts */}
-        <div style={{ padding: '1rem 0', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1.5rem', color: 'var(--muted)', fontSize: '0.95rem' }}>
+        <div className="tweet-detail-counts" style={{ padding: '1rem 0', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1.5rem', color: 'var(--muted)', fontSize: '0.95rem' }}>
           <div><span style={{ fontWeight: 800, color: 'var(--foreground)' }}>{tweet.retweetCount}</span> Reposts</div>
           <div><span style={{ fontWeight: 800, color: 'var(--foreground)' }}>{tweet.likeCount}</span> Likes</div>
           <div><span style={{ fontWeight: 800, color: 'var(--foreground)' }}>{tweet.bookmarkCount}</span> Bookmarks</div>
         </div>
 
         {/* Actions */}
-        <div style={{ display: 'flex', justifyContent: 'space-around', padding: '0.5rem 0' }}>
+        <div className="tweet-action-row" style={{ display: 'flex', justifyContent: 'space-around', padding: '0.5rem 0' }}>
           <button className="action-btn" style={{ color: 'var(--muted)' }} onClick={() => document.getElementById('reply-input')?.focus()}>
             <MessageCircle size={22} />
           </button>
@@ -266,13 +266,13 @@ export default function TweetDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {/* Reply Composer */}
-      <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div className="tweet-reply-composer" style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
         <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', flexShrink: 0 }} />
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <span style={{ color: 'var(--muted)', fontSize: '0.9rem', marginBottom: '0.2rem' }}>
             Replying to <span style={{ color: 'var(--accent)' }}>@{tweet.user?.username || tweet.user?.email?.split('@')[0]}</span>
           </span>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
+          <div className="tweet-reply-controls" style={{ display: 'flex', alignItems: 'flex-end', gap: '0.5rem' }}>
             <textarea
               id="reply-input"
               value={replyContent}

@@ -43,10 +43,10 @@ export function Avatar({ user, size = 48 }: { user: TweetFeedItem['user']; size?
 
   if (user?.avatar) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={user.avatar} alt="" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }} />;
+    return <img src={user.avatar} alt="" className="tweet-avatar" style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover' }} />;
   }
   return (
-    <div style={{
+    <div className="tweet-avatar" style={{
       width: size, height: size, borderRadius: '50%',
       background: `linear-gradient(135deg, ${palette[0]}, ${palette[1]})`,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -229,7 +229,7 @@ export default function TweetCard({ tweet, currentUserId, currentUserSubscriptio
           <CommunityNoteWidget tweetId={tweet.retweetOf ? tweet.retweetOfId! : tweet.id} />
 
           {/* Actions */}
-          <div style={{ display: 'flex', gap: '0', marginTop: '0.5rem', maxWidth: '420px', justifyContent: 'space-between' }}>
+          <div className="tweet-action-row" style={{ display: 'flex', gap: '0', marginTop: '0.5rem', maxWidth: '420px', justifyContent: 'space-between' }}>
             <button
               className="action-btn"
               onClick={toggleReplies}
@@ -314,9 +314,9 @@ export default function TweetCard({ tweet, currentUserId, currentUserSubscriptio
             style={{ overflow: 'hidden', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid var(--card-border)' }}
           >
             {/* Reply composer */}
-            <div style={{ padding: '1rem 1.25rem 0.75rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="tweet-reply-composer" style={{ padding: '1rem 1.25rem 0.75rem', display: 'flex', gap: '0.75rem', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)', flexShrink: 0 }} />
-              <div style={{ flex: 1, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div className="tweet-reply-controls" style={{ flex: 1, display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                 <input
                   value={replyContent}
                   onChange={e => setReplyContent(e.target.value)}

@@ -28,7 +28,7 @@ export default function SafetyCenter() {
           { icon: <Lock size={24} />, title: "Protected Accounts", desc: "Change your Tweet Privacy to 'Followers' in your Settings to manually approve who can follow you and see your posts." },
           { icon: <EyeOff size={24} />, title: "Content Filtering", desc: "Our automated systems filter out heavily profane or abusive language to keep your experience clean." }
         ].map(item => (
-          <div key={item.title} style={{ padding: '1.5rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '12px', display: 'flex', gap: '1.5rem' }}>
+          <div key={item.title} className="safety-card" style={{ padding: '1.5rem', background: 'var(--card-bg)', border: '1px solid var(--card-border)', borderRadius: '12px', display: 'flex', gap: '1.5rem' }}>
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--foreground)', flexShrink: 0 }}>
               {item.icon}
             </div>
