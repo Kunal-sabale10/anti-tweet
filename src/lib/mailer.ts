@@ -5,17 +5,21 @@ let transporter: nodemailer.Transporter;
 
 export async function getTransporter() {
   if (!transporter) {
-    // For local dev, we create a test account. In prod, you'd use SendGrid/AWS SES.
-    // To speed this up and not await on every request, we just use a generic config.
-    // We will just log to console for development if real credentials aren't present.
-    transporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      auth: {
-          user: 'test@ethereal.email', // Replace with real Ethereal account if you want inbox
-          pass: 'password'
-      }
-    });
+    const gmailUser = process.env.GMAIL_USER?.trim();
+    const gmailPass = process.env.GMAIL_APP_PASSWORD?.trim();
+
+    if (gmailUser && gmailPass) {
+      transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user: gmailUser, pass: gmailPass },
+      });
+    } else {
+      transporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email',
+        port: 587,
+        auth: { user: 'test@ethereal.email', pass: 'password' }
+      });
+    }
   }
   return transporter;
 }
@@ -29,15 +33,16 @@ export async function sendOTP(email: string, code: string) {
   // Try sending, but catch error since ethereal test account might fail
   try {
     const t = await getTransporter();
+    const fromEmail = process.env.GMAIL_USER?.trim() || 'security@anti-tweet.com';
     await t.sendMail({
-      from: '"Anti-Tweet Security" <security@anti-tweet.com>',
+      from: `"Anti-Tweet Security" <${fromEmail}>`,
       to: email,
       subject: "Your Login OTP",
       text: `Your OTP is: ${code}. Valid for 10 minutes.`,
       html: `<b>Your OTP is: ${code}</b>. Valid for 10 minutes.`
     });
-  } catch {
-    console.log("Mock email transport failed, but OTP is logged above.");
+  } catch (err) {
+    console.error("Email transport failed:", err);
   }
 }
 
