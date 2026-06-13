@@ -37,12 +37,16 @@ export default function HomeFeed() {
   const notifiedTweetIds = useRef<Set<string>>(new Set());
   const esRef = useRef<EventSource | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [currentUser, setCurrentUser] = useState<{ id: string; subscription: string } | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string; subscription: string; notificationPref?: boolean } | null>(null);
+  const notificationPrefRef = useRef<boolean>(true); // default true until loaded
   
   // Load current user info
   useEffect(() => {
     fetch('/api/user/profile').then(r => r.json()).then(d => {
-      if (d.user) setCurrentUser({ id: d.user.id, subscription: d.user.subscription });
+      if (d.user) {
+        setCurrentUser({ id: d.user.id, subscription: d.user.subscription, notificationPref: d.user.notificationPref });
+        notificationPrefRef.current = d.user.notificationPref !== false;
+      }
     }).catch(() => {});
   }, []);
   
@@ -63,7 +67,7 @@ export default function HomeFeed() {
         if (notifiedTweetIds.current.has(tweet.id)) return;
         const tweetContent = tweet.content?.toLowerCase() || '';
         if (tweetContent.includes('cricket') || tweetContent.includes('science')) {
-          if ('Notification' in window && Notification.permission === 'granted') {
+          if (notificationPrefRef.current && 'Notification' in window && Notification.permission === 'granted') {
             notifiedTweetIds.current.add(tweet.id);
             new Notification('New Anti-Tweet Alert!', {
               body: tweet.content || 'A new post matches your interests.',

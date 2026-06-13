@@ -225,6 +225,26 @@ export default function ProfilePage() {
     }
   };
 
+  const toggleNotificationPref = async () => {
+    if (!user) return;
+    const newVal = !user.notificationPref;
+    setUser(prev => prev ? { ...prev, notificationPref: newVal } : prev);
+    try {
+      await fetch('/api/user/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationPref: newVal })
+      });
+      // Request permission if they are turning it ON and haven't granted yet
+      if (newVal && 'Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission();
+      }
+    } catch (e) {
+      setUser(prev => prev ? { ...prev, notificationPref: !newVal } : prev);
+      console.error('Failed to toggle notification', e);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ padding: '0' }}>
@@ -557,10 +577,10 @@ export default function ProfilePage() {
           <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--card-border)', borderRadius: '9999px', padding: '0.3rem 0.75rem', fontSize: '0.8rem', color: 'var(--muted)' }}>
             <Globe size={12} /> {LANGUAGE_LABELS[user.language] || user.language}
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: user.notificationPref ? 'rgba(59,130,246,0.08)' : 'rgba(255,255,255,0.04)', border: `1px solid ${user.notificationPref ? 'rgba(59,130,246,0.3)' : 'var(--card-border)'}`, borderRadius: '9999px', padding: '0.3rem 0.75rem', fontSize: '0.8rem', color: user.notificationPref ? '#3b82f6' : 'var(--muted)' }}>
+          <button onClick={toggleNotificationPref} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', background: user.notificationPref ? 'rgba(59,130,246,0.08)' : 'rgba(255,255,255,0.04)', border: `1px solid ${user.notificationPref ? 'rgba(59,130,246,0.3)' : 'var(--card-border)'}`, borderRadius: '9999px', padding: '0.3rem 0.75rem', fontSize: '0.8rem', color: user.notificationPref ? '#3b82f6' : 'var(--muted)', transition: 'all 0.2s' }}>
             {user.notificationPref ? <Bell size={12} /> : <BellOff size={12} />}
             {user.notificationPref ? 'Notifications On' : 'Notifications Off'}
-          </span>
+          </button>
         </motion.div>
       </div>
 
