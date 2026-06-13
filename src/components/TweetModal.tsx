@@ -166,15 +166,34 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
       return;
     }
 
-    const audio = new Audio(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    const audio = new Audio(objectUrl);
+    
+    // Fallback if metadata doesn't load within 2 seconds
+    const timeout = setTimeout(() => {
+      setAudioBlob(file);
+      setAudioUrl(objectUrl);
+      setError('');
+    }, 2000);
+
     audio.onloadedmetadata = () => {
+      clearTimeout(timeout);
       if (audio.duration > 300) {
         setError('Audio file must be 5 minutes or less.');
       } else {
         setAudioBlob(file);
-        setAudioUrl(audio.src);
+        setAudioUrl(objectUrl);
         setError('');
       }
+    };
+
+    audio.onerror = () => {
+      clearTimeout(timeout);
+      // If the browser can't read it, we still allow uploading, 
+      // the backend will handle the 100MB limit.
+      setAudioBlob(file);
+      setAudioUrl(objectUrl);
+      setError('');
     };
   };
 
