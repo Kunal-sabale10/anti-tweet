@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mic, Send, ShieldCheck, AlertCircle, Clock, Smile, Image as ImageIcon, BookOpen, Globe, Lock, Users, Star } from 'lucide-react';
+import { X, Mic, Send, ShieldCheck, AlertCircle, Clock, Smile, Image as ImageIcon, BookOpen, Globe, Lock, Users, Star, FileAudio } from 'lucide-react';
 import EmojiPicker, { EmojiClickData, Theme } from 'emoji-picker-react';
 import { getErrorMessage } from '@/lib/errors';
 import GifPicker from '@/components/GifPicker';
@@ -45,6 +45,7 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
   const [mediaItems, setMediaItems] = useState<{url: string, type: string}[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const audioFileInputRef = useRef<HTMLInputElement>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -145,6 +146,27 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
       setUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const handleAudioFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 100 * 1024 * 1024) {
+      setError('Audio file exceeds 100MB limit.');
+      return;
+    }
+
+    const audio = new Audio(URL.createObjectURL(file));
+    audio.onloadedmetadata = () => {
+      if (audio.duration > 300) {
+        setError('Audio file must be 5 minutes or less.');
+      } else {
+        setAudioBlob(file);
+        setAudioUrl(audio.src);
+        setError('');
+      }
+    };
   };
 
   const startRecording = async () => {
@@ -425,15 +447,29 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
                 {!audioUrl ? (
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
-                      <motion.div 
-                        animate={isRecording ? { scale: [1, 1.2, 1], opacity: [1, 0.5, 1] } : {}}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                        style={{ width: '64px', height: '64px', borderRadius: '50%', background: isRecording ? '#ef4444' : 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}
-                        onClick={isRecording ? stopRecording : startRecording}
-                      >
-                        {isRecording ? <div style={{ width: '20px', height: '20px', background: 'white', borderRadius: '3px' }} /> : <Mic size={32} />}
-                      </motion.div>
+                      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <motion.div 
+                          animate={isRecording ? { scale: [1, 1.2, 1], opacity: [1, 0.5, 1] } : {}}
+                          transition={{ repeat: Infinity, duration: 1 }}
+                          style={{ width: '64px', height: '64px', borderRadius: '50%', background: isRecording ? '#ef4444' : 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'white' }}
+                          onClick={isRecording ? stopRecording : startRecording}
+                          title="Record Audio"
+                        >
+                          {isRecording ? <div style={{ width: '20px', height: '20px', background: 'white', borderRadius: '3px' }} /> : <Mic size={32} />}
+                        </motion.div>
+                        
+                        {!isRecording && (
+                          <div
+                            style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--muted)' }}
+                            onClick={() => audioFileInputRef.current?.click()}
+                            title="Upload Audio File"
+                          >
+                            <FileAudio size={28} />
+                          </div>
+                        )}
+                      </div>
                       
+                      <input type="file" ref={audioFileInputRef} onChange={handleAudioFileUpload} accept="audio/*" style={{ display: 'none' }} />
                       <div style={{ textAlign: 'left' }}>
                         <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>{isRecording ? 'Recording...' : 'Voice Note'}</div>
                         <div style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>

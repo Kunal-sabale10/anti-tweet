@@ -26,6 +26,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'File and OTP are required' }, { status: 400 });
     }
 
+    // Enforce time window (2 PM to 7 PM IST)
+    const now = new Date();
+    const istOptions = { timeZone: 'Asia/Kolkata', hour: 'numeric', hourCycle: 'h23' } as const;
+    const istHourStr = new Intl.DateTimeFormat('en-US', istOptions).format(now);
+    const istHour = parseInt(istHourStr);
+    
+    if (istHour < 14 || istHour >= 19) {
+      return NextResponse.json({ error: 'Audio tweets are only allowed between 2:00 PM and 7:00 PM IST.' }, { status: 403 });
+    }
+
     // 1. Verify OTP
     const otpRequest = await prisma.oTPRequest.findFirst({
       where: {
