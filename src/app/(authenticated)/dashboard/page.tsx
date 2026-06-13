@@ -270,8 +270,14 @@ export default function HomeFeed() {
                 GIF
               </button>
               <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*,video/mp4,video/webm,video/quicktime" style={{ display: 'none' }} />
-              <button className="icon-btn" aria-label="Add image" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage}>
+              <button type="button" className="icon-btn" aria-label="Add image" onClick={() => fileInputRef.current?.click()} disabled={uploadingImage}>
                 {uploadingImage ? <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid var(--accent)', borderTopColor: 'transparent', animation: 'spin 1s linear infinite' }} /> : <ImageIcon size={20} />}
+              </button>
+              <button type="button" className="icon-btn" onClick={() => window.dispatchEvent(new Event('open-tweet-modal'))} title="Audio Tweet">
+                <Mic size={20} />
+              </button>
+              <button type="button" className="icon-btn" onClick={() => window.dispatchEvent(new Event('open-tweet-modal'))} title="Schedule Tweet">
+                <Clock size={20} />
               </button>
             </div>
             
