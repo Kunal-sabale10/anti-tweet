@@ -24,6 +24,11 @@ const englishTranslations = {
   more: 'More',
   security: 'Security',
   display: 'Display',
+  cancel: 'Cancel',
+  save: 'Save',
+  reply: 'Reply',
+  repost: 'Repost',
+  like: 'Like',
 };
 
 export type TranslationKey = keyof typeof englishTranslations;
@@ -55,6 +60,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     more: 'Más',
     security: 'Seguridad',
     display: 'Pantalla',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+    reply: 'Responder',
+    repost: 'Repostear',
+    like: 'Me gusta',
   },
   FR: {
     welcome: 'Bon retour',
@@ -80,6 +90,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     more: 'Plus',
     security: 'Sécurité',
     display: 'Affichage',
+    cancel: 'Annuler',
+    save: 'Enregistrer',
+    reply: 'Répondre',
+    repost: 'Republier',
+    like: 'Aimer',
   },
   HI: {
     welcome: 'वापसी पर स्वागत है',
@@ -105,6 +120,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     more: 'अधिक',
     security: 'सुरक्षा',
     display: 'डिस्प्ले',
+    cancel: 'रद्द करें',
+    save: 'सहेजें',
+    reply: 'जवाब दें',
+    repost: 'रीपोस्ट करें',
+    like: 'पसंद करें',
   },
   PT: {
     welcome: 'Bem-vindo de volta',
@@ -130,6 +150,11 @@ export const translations: Record<Language, TranslationDictionary> = {
     more: 'Mais',
     security: 'Segurança',
     display: 'Tela',
+    cancel: 'Cancelar',
+    save: 'Salvar',
+    reply: 'Responder',
+    repost: 'Repostar',
+    like: 'Curtir',
   },
   ZH: {
     welcome: '欢迎回来',
@@ -155,5 +180,10 @@ export const translations: Record<Language, TranslationDictionary> = {
     more: '更多',
     security: '安全',
     display: '显示',
+    cancel: '取消',
+    save: '保存',
+    reply: '回复',
+    repost: '转发',
+    like: '喜欢',
   },
 };

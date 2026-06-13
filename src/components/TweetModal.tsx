@@ -5,6 +5,7 @@ import { X, Mic, Send, ShieldCheck, AlertCircle, Clock, Smile, Image as ImageIco
 import EmojiPicker, { EmojiClickData, Theme } from 'emoji-picker-react';
 import { getErrorMessage } from '@/lib/errors';
 import GifPicker from '@/components/GifPicker';
+import { useLanguage } from '@/lib/LanguageContext';
 
 interface TweetModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface TweetModalProps {
 }
 
 export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalProps) {
+  const { t } = useLanguage();
   const [content, setContent] = useState('');
   const [isAudioMode, setIsAudioMode] = useState(false);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -628,14 +630,14 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
                 disabled={loading || uploadingImage || (!content && !audioBlob && mediaItems.length === 0) || (isAudioMode && !audioBlob && !isRecording)}
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.5rem', opacity: uploadingImage ? 0.6 : 1 }}
               >
-                {loading ? 'Posting...' : scheduledFor ? <><Clock size={18} /> Schedule</> : <><Send size={18} /> Post</>}
+                {loading ? 'Posting...' : scheduledFor ? <><Clock size={18} /> Schedule</> : <><Send size={18} /> {t('post_tweet')}</>}
               </button>
             </div>
           </div>
         </form>
 
         <div style={{ marginTop: '1rem', fontSize: '0.75rem', color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-           <Clock size={12} /> Audio window: 14:00 - 19:00 IST
+           <Clock size={12} /> {t('audio_window')}
         </div>
       </motion.div>
     </div>

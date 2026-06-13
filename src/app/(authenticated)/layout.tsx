@@ -424,7 +424,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
                   onMouseEnter={e => (e.currentTarget.style.background = 'var(--hover-bg)')}
                   onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                 >
-                  Log out @{currentUser?.username || currentUser?.email?.split('@')[0]}
+                  {t('logout')} @{currentUser?.username || currentUser?.email?.split('@')[0]}
                 </button>
               </motion.div>
             )}
@@ -534,7 +534,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
         {/* What's Happening */}
         {trending.length > 0 && (
           <div className="x-widget">
-            <h3 className="x-widget-title">What's happening</h3>
+            <h3 className="x-widget-title">{t('trending')}</h3>
             {trending.slice(0, 5).map((item, i) => (
               <Link key={item.tag} href={`/explore?q=${encodeURIComponent('#' + item.tag)}`} className="x-trend-item">
                 <div className="x-trend-meta">{i + 1} · Trending</div>
@@ -551,7 +551,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Who to Follow */}
         {suggestedUsers.length > 0 && (
           <div className="x-widget" style={{ marginTop: 12 }}>
-            <h3 className="x-widget-title">Who to follow</h3>
+            <h3 className="x-widget-title">{t('who_to_follow')}</h3>
             {suggestedUsers.slice(0, 3).map(u => (
               <div key={u.id} className="x-follow-item">
                 <Link href={`/profile/${u.id}`}>
