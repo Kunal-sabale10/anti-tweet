@@ -121,6 +121,22 @@ export default function HomeFeed() {
       setNewTweetsBanner(prev => {
         const existingIds = new Set(prev.map(t => t.id));
         const unique = newTweets.filter(t => !existingIds.has(t.id));
+        
+        // Trigger Notifications for real-time incoming tweets
+        unique.forEach(tweet => {
+          if (notifiedTweetIds.current.has(tweet.id)) return;
+          const tweetContent = tweet.content?.toLowerCase() || '';
+          if (tweetContent.includes('cricket') || tweetContent.includes('science')) {
+            if (notificationPrefRef.current && 'Notification' in window && Notification.permission === 'granted') {
+              notifiedTweetIds.current.add(tweet.id);
+              new Notification('New Anti-Tweet Alert!', {
+                body: tweet.content || 'A new post matches your interests.',
+                icon: '/favicon.ico'
+              });
+            }
+          }
+        });
+
         return [...unique, ...prev];
       });
       clearNewTweets();
