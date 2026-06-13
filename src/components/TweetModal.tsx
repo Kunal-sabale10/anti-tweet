@@ -97,10 +97,19 @@ export default function TweetModal({ isOpen, onClose, onSuccess }: TweetModalPro
 
   const checkAudioTimeWindow = () => {
     const now = new Date();
-    const istOptions = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false } as const;
-    const istHour = parseInt(new Intl.DateTimeFormat('en-US', istOptions).format(now));
+    const utcHours = now.getUTCHours();
+    const utcMinutes = now.getUTCMinutes();
     
-    if (istHour < 14 || istHour >= 19) {
+    // IST is UTC + 5:30
+    let istMinutes = utcMinutes + 30;
+    let istHours = utcHours + 5;
+    if (istMinutes >= 60) {
+      istHours += 1;
+      istMinutes -= 60;
+    }
+    istHours = istHours % 24;
+    
+    if (istHours < 14 || istHours >= 19) {
       setError('Audio tweets are only allowed between 2:00 PM and 7:00 PM IST.');
       return false;
     }
