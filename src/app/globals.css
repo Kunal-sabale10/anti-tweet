@@ -598,33 +598,65 @@ a {
 }
 
 /* ─── Messages Layout ─── */
-.x-messages-layout {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
+.x-layout.messages-layout-active {
+  display: grid;
+  grid-template-columns: 280px 420px minmax(0, 1fr) 350px;
   width: 100%;
+  max-width: 100%;
+  height: 100vh;
+}
+
+.messages-layout-active .messages-main,
+.messages-layout-active .x-messages-layout {
+  display: contents;
 }
 
 .x-messages-list {
-  width: 380px;
-  flex-shrink: 0;
-  border-right: 1px solid var(--card-border);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  transition: transform 0.3s;
+  height: 100%;
+  border-right: 1px solid var(--card-border);
+  border-left: 1px solid var(--card-border);
 }
 
 .x-messages-chat {
-  flex: 1;
-  min-width: 0;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
   overflow: hidden;
   background: var(--background);
 }
 
+@media (max-width: 1365px) and (min-width: 768px) {
+  .x-layout.messages-layout-active {
+    grid-template-columns: 88px 350px 1fr;
+  }
+  .messages-layout-active .messages-right {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
+  .x-layout.messages-layout-active {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .messages-layout-active .messages-main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .messages-layout-active .x-messages-layout {
+    display: flex;
+    flex: 1;
+    width: 100%;
+  }
+
   .x-messages-list.has-selection {
     display: none;
   }
@@ -636,6 +668,7 @@ a {
   .x-messages-list {
     width: 100%;
     border-right: none;
+    border-left: none;
   }
 }
 

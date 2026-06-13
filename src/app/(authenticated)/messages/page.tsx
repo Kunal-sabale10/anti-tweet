@@ -174,29 +174,29 @@ function ConversationList({
               }}
               className="conv-item"
             >
-              <Avatar user={c.otherUser} size={44} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.5rem' }}>
-                  <span style={{ fontWeight: 700, fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
+                <Avatar user={c.otherUser} size={44} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
+                  <span style={{ fontWeight: 700, fontSize: '0.95rem', whiteSpace: 'nowrap' }}>
                     {c.otherUser?.displayName || c.otherUser?.email?.split('@')[0] || 'Unknown'}
                   </span>
-                  {c.lastMessage && (
-                    <span style={{ fontSize: '0.72rem', color: 'var(--muted)', flexShrink: 0 }}>
-                      {timeAgo(c.lastMessage.createdAt)}
-                    </span>
-                  )}
+                  <span style={{
+                    color: 'var(--muted)',
+                    fontSize: '0.9rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    flex: 1
+                  }}>
+                    {c.lastMessage?.content || 'Start the conversation…'}
+                  </span>
                 </div>
-                <p style={{
-                  color: 'var(--muted)',
-                  fontSize: '0.82rem',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  whiteSpace: 'nowrap',
-                  margin: '0.1rem 0 0',
-                }}>
-                  {c.lastMessage?.content || 'Start the conversation…'}
-                </p>
               </div>
+              {c.lastMessage && (
+                <span style={{ fontSize: '0.8rem', color: 'var(--muted)', flexShrink: 0 }}>
+                  {timeAgo(c.lastMessage.createdAt)}
+                </span>
+              )}
             </button>
           ))
         )}
@@ -373,7 +373,7 @@ function ChatWindow({
         borderBottom: '1px solid var(--card-border)',
         display: 'flex',
         alignItems: 'center',
-        gap: '0.9rem',
+        justifyContent: 'space-between',
         background: 'rgba(15,23,42,0.92)',
         backdropFilter: 'blur(12px)',
         flexShrink: 0,
@@ -385,16 +385,18 @@ function ChatWindow({
         >
           <ArrowLeft size={20} />
         </button>
-        <Avatar user={otherUser} size={38} />
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', flex: 1, minWidth: 0, paddingLeft: '0.5rem' }}>
+          <Avatar user={otherUser} size={38} />
+          <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 700, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {otherUser?.displayName || otherUser?.email?.split('@')[0] || 'User'}
           </div>
           {otherUser?.username && (
             <div style={{ color: 'var(--muted)', fontSize: '0.78rem' }}>@{otherUser.username}</div>
-          )}
+            )}
+          </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.4rem' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
           <button style={{ background: 'rgba(255,255,255,0.06)', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '0.5rem', borderRadius: '50%', display: 'flex', transition: 'all 0.15s' }} className="header-action">
             <Phone size={17} />
           </button>
@@ -450,7 +452,7 @@ function ChatWindow({
                           alignItems: 'flex-end',
                           gap: '0.5rem',
                           flexDirection: mine ? 'row-reverse' : 'row',
-                          maxWidth: '72%',
+                          maxWidth: '70%',
                         }}
                       >
                         {/* Avatar — only on last message of a run, and only for theirs */}
@@ -473,6 +475,7 @@ function ChatWindow({
                             fontSize: '0.92rem',
                             lineHeight: 1.45,
                             wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
                             border: mine ? 'none' : '1px solid rgba(255,255,255,0.08)',
                             boxShadow: mine ? '0 2px 12px rgba(59,130,246,0.25)' : 'none',
                           }}>
@@ -518,13 +521,16 @@ function ChatWindow({
         padding: '0.85rem 1rem',
         borderTop: '1px solid var(--card-border)',
         display: 'flex',
-        gap: '0.75rem',
+        gap: '12px',
         alignItems: 'center',
         background: 'rgba(15,23,42,0.7)',
         backdropFilter: 'blur(8px)',
         flexShrink: 0,
+        position: 'sticky',
+        bottom: 0,
+        width: '100%',
       }}>
-        <div style={{ flex: 1, position: 'relative' }}>
+        <div style={{ flex: 1, position: 'relative', minWidth: 0 }}>
           <input
             ref={inputRef}
             type="text"

@@ -204,15 +204,17 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
   const avatarBg = 'linear-gradient(135deg, #1d9bf0, #7856ff)';
   const avatarInitial = (currentUser?.displayName || currentUser?.email || 'U').charAt(0).toUpperCase();
 
+  const isMessagesPage = pathname?.startsWith('/messages');
+
   return (
-    <div className="x-layout">
+    <div className={`x-layout ${isMessagesPage ? 'messages-layout-active' : ''}`}>
       <KeyboardShortcuts />
 
       {/* ─── Drawer Overlay (Mobile) ─── */}
       <div className={`x-drawer-overlay ${isDrawerOpen ? 'open' : ''}`} onClick={() => setIsDrawerOpen(false)} />
 
       {/* ─── Left Sidebar ─── */}
-      <aside className={`x-sidebar ${isDrawerOpen ? 'open' : ''}`}>
+      <aside className={`x-sidebar ${isMessagesPage ? 'messages-sidebar' : ''} ${isDrawerOpen ? 'open' : ''}`}>
         {/* Wordmark: Logo + Brand Name */}
         <Link
           href="/dashboard"
@@ -486,12 +488,12 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* ─── Main Content ─── */}
-      <main className="x-main">
+      <main className={`x-main ${isMessagesPage ? 'messages-main' : ''}`}>
         {children}
       </main>
 
       {/* ─── Right Sidebar ─── */}
-      <aside className="x-right" style={{ paddingTop: '8px' }}>
+      <aside className={`x-right ${isMessagesPage ? 'messages-right' : ''}`} style={{ paddingTop: '8px' }}>
         {/* Search */}
         <form onSubmit={handleSearchSubmit} className="x-search-wrap">
           <Search className="x-search-icon" size={19} />
