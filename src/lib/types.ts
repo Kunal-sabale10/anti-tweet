@@ -114,6 +114,14 @@ export interface PublicUser {
   followsMe: boolean;
   dmPrivacy: string;
   subscription: string | null;
+  loginSessions?: {
+    id: string;
+    browserType: string | null;
+    os: string | null;
+    deviceCat: string | null;
+    ipAddress: string | null;
+    loggedInAt: string;
+  }[];
 }
 
 export interface ConversationItem {

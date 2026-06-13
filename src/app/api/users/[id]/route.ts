@@ -12,7 +12,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const user = await prisma.user.findUnique({
       where: { id },
       include: {
-        _count: { select: { followers: true, following: true } }
+        _count: { select: { followers: true, following: true } },
+        ...(session?.userId === id && { loginSessions: { orderBy: { loggedInAt: 'desc' }, take: 5 } })
       }
     });
 
@@ -54,6 +55,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
       followsMe,
       dmPrivacy: user.dmPrivacy,
       subscription: user.subscription,
+      // @ts-ignore - Prisma dynamic include
+      loginSessions: user.loginSessions || [],
     });
   } catch (error) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

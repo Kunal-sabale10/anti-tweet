@@ -53,19 +53,24 @@ export async function POST(req: Request) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-    if (otpType === 'LOGIN' && sessionData) {
+    if (otpType === 'LOGIN') {
+      // Parse User-Agent
+      const { UAParser } = require('ua-parser-js');
+      const parser = new UAParser(req.headers.get('user-agent') || '');
+      const browser = parser.getBrowser();
+      const os = parser.getOS();
+      const device = parser.getDevice();
+
       await prisma.loginSession.create({
         data: {
           userId: user.id,
-          browserType: sessionData.browserType,
-          os: sessionData.osType,
-          deviceCat: sessionData.deviceCat,
-          ipAddress: sessionData.ipAddress,
+          browserType: browser.name || 'Unknown',
+          os: os.name || 'Unknown',
+          deviceCat: device.type || 'desktop',
+          ipAddress: req.headers.get('x-forwarded-for') || '127.0.0.1',
         },
       });
-    }
 
-    if (otpType === 'LOGIN') {
       const token = signToken({ userId: user.id, email: user.email });
       const response = NextResponse.json({ success: true, redirect: '/dashboard' });
       setSessionCookie(response, token);

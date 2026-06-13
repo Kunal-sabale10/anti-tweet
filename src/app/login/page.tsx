@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '@/components/Logo';
 
-type Step = 'email' | 'password' | 'not-found';
+type Step = 'email' | 'password' | 'otp' | 'not-found';
 
 export default function LoginPage() {
   const [step, setStep] = useState<Step>('email');
@@ -12,6 +12,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [pendingUserId, setPendingUserId] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [mockOtp, setMockOtp] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [savedEmails, setSavedEmails] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -89,15 +92,46 @@ export default function LoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
       });
-      const data = await res.json() as { success?: boolean; redirect?: string; error?: string };
+      const data = await res.json() as { success?: boolean; redirect?: string; requiresOtp?: boolean; mockOtp?: string; userId?: string; error?: string };
       if (!res.ok) throw new Error(data.error || 'Login failed');
 
-      if (data.success) {
+      if (data.requiresOtp) {
+        setPendingUserId(data.userId || '');
+        setMockOtp(data.mockOtp || '');
+        setOtpCode(data.mockOtp || ''); // auto-fill for testing ease
+        setStep('otp');
+      } else if (data.success) {
         saveEmail(email); // persist on successful login
         window.location.href = data.redirect || '/dashboard';
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!otpCode.trim()) return;
+    setError('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: pendingUserId, code: otpCode, type: 'LOGIN' })
+      });
+      const data = await res.json() as { success?: boolean; redirect?: string; error?: string };
+      if (!res.ok) throw new Error(data.error || 'OTP verification failed');
+
+      if (data.success) {
+        saveEmail(email);
+        window.location.href = data.redirect || '/dashboard';
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'OTP verification failed');
     } finally {
       setLoading(false);
     }
@@ -363,6 +397,49 @@ export default function LoginPage() {
                 <p style={{ textAlign: 'center', fontSize: '0.875rem' }}>
                   <Link href="/forgot-password" style={{ color: '#1d9bf0' }}>Forgot password?</Link>
                 </p>
+              </form>
+            </motion.div>
+          )}
+
+          {/* ══════════════ STEP 2.5: OTP ══════════════ */}
+          {step === 'otp' && (
+            <motion.div
+              key="otp"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.22 }}
+            >
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h2 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Verify your identity</h2>
+                <p style={{ color: '#71767b', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                  You are logging in from a restricted browser. We've sent a code to <strong style={{ color: 'var(--foreground)' }}>{email}</strong>.
+                </p>
+              </div>
+
+              <form onSubmit={handleVerifyOtp} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={otpCode}
+                  onChange={e => setOtpCode(e.target.value)}
+                  placeholder="Enter 6-digit code"
+                  autoFocus
+                  style={inputStyle}
+                />
+                
+                {mockOtp && (
+                  <div style={{ padding: '0.5rem', background: 'rgba(29, 155, 240, 0.1)', color: '#1d9bf0', borderRadius: '8px', fontSize: '0.8rem' }}>
+                    [TESTING ONLY] Your OTP is: {mockOtp}
+                  </div>
+                )}
+
+                <button type="submit" disabled={loading || otpCode.length < 5} style={pillBtn(!loading && otpCode.length >= 5)}>
+                  {loading ? <Spinner label="Verifying..." /> : 'Verify'}
+                </button>
+                <button type="button" onClick={goBack} style={{ background: 'transparent', border: 'none', color: '#1d9bf0', cursor: 'pointer', fontWeight: 600 }}>
+                  Cancel
+                </button>
               </form>
             </motion.div>
           )}

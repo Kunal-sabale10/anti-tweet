@@ -472,6 +472,29 @@ export default function UserProfilePage() {
         </motion.div>
       </div>
 
+      {/* Login History */}
+      {isOwnProfile && user.loginSessions && user.loginSessions.length > 0 && (
+        <div style={{ padding: '0 1.25rem 1.25rem', marginTop: '0.5rem' }}>
+          <h3 style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--muted)', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Recent Login History
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {user.loginSessions.slice(0, 5).map(session => (
+              <div key={session.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--card-border)', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{session.browserType} on {session.os}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>IP: {session.ipAddress} · {session.deviceCat}</span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: 'var(--muted)', textAlign: 'right' }}>
+                  {new Date(session.loggedInAt).toLocaleDateString()} <br/>
+                  {new Date(session.loggedInAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Posts tab */}
       <div style={{ borderBottom: '1px solid var(--card-border)' }}>
         <div style={{ padding: '0.75rem 1.25rem', fontWeight: 700, fontSize: '0.9rem', borderBottom: '2px solid var(--accent)', display: 'inline-block', marginBottom: -1 }}>
