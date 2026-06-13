@@ -29,6 +29,9 @@ const englishTranslations = {
   reply: 'Reply',
   repost: 'Repost',
   like: 'Like',
+  for_you: 'For you',
+  following: 'Following',
+  what_is_happening: 'What is happening?!',
 };
 
 export type TranslationKey = keyof typeof englishTranslations;
@@ -65,6 +68,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     reply: 'Responder',
     repost: 'Repostear',
     like: 'Me gusta',
+    for_you: 'Para ti',
+    following: 'Siguiendo',
+    what_is_happening: '¡¿Qué está pasando?!',
   },
   FR: {
     welcome: 'Bon retour',
@@ -95,6 +101,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     reply: 'Répondre',
     repost: 'Republier',
     like: 'Aimer',
+    for_you: 'Pour vous',
+    following: 'Abonnements',
+    what_is_happening: 'Quoi de neuf ?!',
   },
   HI: {
     welcome: 'वापसी पर स्वागत है',
@@ -125,6 +134,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     reply: 'जवाब दें',
     repost: 'रीपोस्ट करें',
     like: 'पसंद करें',
+    for_you: 'आपके लिए',
+    following: 'फॉलोइंग',
+    what_is_happening: 'क्या हो रहा है?!',
   },
   PT: {
     welcome: 'Bem-vindo de volta',
@@ -155,6 +167,9 @@ export const translations: Record<Language, TranslationDictionary> = {
     reply: 'Responder',
     repost: 'Repostar',
     like: 'Curtir',
+    for_you: 'Para você',
+    following: 'Seguindo',
+    what_is_happening: 'O que está acontecendo?!',
   },
   ZH: {
     welcome: '欢迎回来',
@@ -185,5 +200,8 @@ export const translations: Record<Language, TranslationDictionary> = {
     reply: '回复',
     repost: '转发',
     like: '喜欢',
+    for_you: '为你推荐',
+    following: '正在关注',
+    what_is_happening: '有什么新鲜事？！',
   },
 };

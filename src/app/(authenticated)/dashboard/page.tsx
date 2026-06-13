@@ -21,8 +21,10 @@ import GifPicker from '@/components/GifPicker';
 import { getErrorMessage } from '@/lib/errors';
 import { useRealTime } from '@/components/RealTimeProvider';
 import TweetCard from '@/components/TweetCard';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function HomeFeed() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
   const [tweets, setTweets] = useState<TweetFeedItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -202,14 +204,14 @@ export default function HomeFeed() {
           onClick={() => setActiveTab('foryou')}
           style={{ flex: 1, padding: '1rem', background: 'none', border: 'none', color: activeTab === 'foryou' ? 'var(--foreground)' : 'var(--muted)', fontWeight: activeTab === 'foryou' ? 700 : 500, cursor: 'pointer', position: 'relative', transition: 'color 0.2s' }}
         >
-          For you
+          {t('for_you')}
           {activeTab === 'foryou' && <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '56px', height: '4px', background: 'var(--accent)', borderRadius: '4px 4px 0 0' }} />}
         </button>
         <button
           onClick={() => setActiveTab('following')}
           style={{ flex: 1, padding: '1rem', background: 'none', border: 'none', color: activeTab === 'following' ? 'var(--foreground)' : 'var(--muted)', fontWeight: activeTab === 'following' ? 700 : 500, cursor: 'pointer', position: 'relative', transition: 'color 0.2s' }}
         >
-          Following
+          {t('following')}
           {activeTab === 'following' && <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '56px', height: '4px', background: 'var(--accent)', borderRadius: '4px 4px 0 0' }} />}
         </button>
       </div>
@@ -223,7 +225,7 @@ export default function HomeFeed() {
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="What is happening?!"
+            placeholder={t('what_is_happening')}
             style={{
               width: '100%',
               background: 'transparent',
@@ -309,7 +311,7 @@ export default function HomeFeed() {
               className="btn btn-primary"
               style={{ padding: '0.6rem 1.5rem', opacity: (content.trim() || mediaItems.length > 0) && !uploadingImage ? 1 : 0.6 }}
             >
-              {loading ? 'Posting…' : 'Post'}
+              {loading ? '...' : t('post_tweet')}
             </button>
           </div>
         </div>

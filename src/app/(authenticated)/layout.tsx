@@ -318,7 +318,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
         {/* Post Button */}
         <button className="x-post-btn" style={{ marginTop: '16px', marginBottom: '4px' }} onClick={() => setIsTweetModalOpen(true)}>
           <Feather size={24} className="x-post-icon" style={{ display: 'none' }} />
-          <span className="x-post-label">Post</span>
+          <span className="x-post-label">{t('post_tweet')}</span>
         </button>
 
         {/* Left Sidebar Search / Who to Follow */}
@@ -331,7 +331,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
               onChange={e => setLeftSearchQ(e.target.value)}
               onFocus={() => { if (leftSearchQ.length >= 2) setShowLeftAutocomplete(true); }}
               onBlur={() => setTimeout(() => setShowLeftAutocomplete(false), 200)}
-              placeholder="Search who to follow"
+              placeholder={t('who_to_follow')}
               className="x-search-input"
               style={{ padding: '10px 16px 10px 48px', fontSize: '0.9rem' }}
             />
@@ -480,7 +480,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
             onChange={e => setSearchQ(e.target.value)}
             onFocus={() => { if (searchQ.length >= 2) setShowAutocomplete(true); }}
             onBlur={() => setTimeout(() => setShowAutocomplete(false), 200)}
-            placeholder="Search"
+            placeholder={t('search')}
             className="x-search-input"
           />
           {showAutocomplete && (autocompleteResults.users.length > 0 || autocompleteResults.hashtags.length > 0) && (
