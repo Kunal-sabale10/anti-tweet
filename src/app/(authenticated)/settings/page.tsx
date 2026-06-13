@@ -263,21 +263,13 @@ export default function SettingsPage() {
     setSaving(true);
     setError('');
     try {
-      const res = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: 'current', code: langOtpCode, type: 'LANGUAGE' })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Invalid OTP');
-
-      // OTP verified successfully. Now patch settings.
       const saveRes = await fetch('/api/user/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: pendingLang })
+        body: JSON.stringify({ language: pendingLang, otp: langOtpCode })
       });
-      if (!saveRes.ok) throw new Error('Failed to save language setting');
+      const data = await saveRes.json();
+      if (!saveRes.ok) throw new Error(data.error || 'Failed to save language setting');
 
       setForm(p => ({ ...p, language: pendingLang }));
       setLanguage(pendingLang as Language);
