@@ -13,21 +13,23 @@ export async function POST(req: Request) {
     }
 
     const { plan } = await req.json();
-    if (!['FREE', 'BLUE', 'GOLD'].includes(plan)) {
+    if (!['FREE', 'BRONZE', 'SILVER', 'GOLD'].includes(plan)) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
     }
 
-    // IST Time Check (10:00 AM - 11:00 AM)
+    // IST Time Check (10:00 AM - 11:00 AM) using reliable UTC math
     const now = new Date();
-    const istOptions = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false } as const;
-    const istHour = parseInt(new Intl.DateTimeFormat('en-US', istOptions).format(now));
+    const uHr = now.getUTCHours();
+    const uMin = now.getUTCMinutes();
+    let istMin = uMin + 30;
+    let istHr = uHr + 5 + Math.floor(istMin / 60);
+    istHr = istHr % 24;
 
-    // For testing purposes, bypassing the IST check
-    // if (istHour !== 10) {
-    //   return NextResponse.json({ 
-    //     error: `Payments are only processed between 10:00 AM and 11:00 AM IST. Current IST hour: ${istHour}:00` 
-    //   }, { status: 403 });
-    // }
+    if (istHr !== 10) {
+      return NextResponse.json({ 
+        error: `Payments are only processed between 10:00 AM and 11:00 AM IST.` 
+      }, { status: 403 });
+    }
 
     const user = await prisma.user.findUnique({ where: { id: session.userId } });
     if (!user) {
@@ -42,9 +44,10 @@ export async function POST(req: Request) {
 
     // Send mock invoice
     const planPrices: Record<string, string> = {
-      FREE: '$0',
-      BLUE: '$8',
-      GOLD: '$1000'
+      FREE: '₹0',
+      BRONZE: '₹100',
+      SILVER: '₹300',
+      GOLD: '₹1000'
     };
     
     await sendInvoice(user.email || '', plan, planPrices[plan]);

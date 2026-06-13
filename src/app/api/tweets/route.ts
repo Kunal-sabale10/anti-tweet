@@ -229,11 +229,11 @@ export async function POST(req: Request) {
     let allowedLimit = 0;
 
     switch (user.subscription) {
-      case 'FREE': allowedLimit = 100; break; // Increased for testing
-      case 'BRONZE': allowedLimit = 300; break;
-      case 'SILVER': allowedLimit = 500; break;
+      case 'FREE': allowedLimit = 1; break;
+      case 'BRONZE': allowedLimit = 3; break;
+      case 'SILVER': allowedLimit = 5; break;
       case 'GOLD': allowedLimit = Infinity; break;
-      default: allowedLimit = 100; break;
+      default: allowedLimit = 1; break;
     }
 
     if (totalTweets + tweetDataList.length > allowedLimit) {
@@ -244,12 +244,15 @@ export async function POST(req: Request) {
 
     // Audio Window Check
     const now = new Date();
-    const istOptions = { timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false } as const;
-    const istHour = parseInt(new Intl.DateTimeFormat('en-US', istOptions).format(now));
+    const uHr = now.getUTCHours();
+    const uMin = now.getUTCMinutes();
+    let istMin = uMin + 30;
+    let istHr = uHr + 5 + Math.floor(istMin / 60);
+    istHr = istHr % 24;
 
     for (const data of tweetDataList) {
       if (data.audioUrl) {
-        if (istHour < 14 || istHour >= 19) {
+        if (istHr < 14 || istHr >= 19) {
           return NextResponse.json({ error: 'Audio tweets are only allowed between 2:00 PM and 7:00 PM IST.' }, { status: 403 });
         }
       }

@@ -14,7 +14,7 @@ function CheckoutContent() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (!plan || (plan !== 'BLUE' && plan !== 'GOLD')) {
+    if (!plan || !['BRONZE', 'SILVER', 'GOLD'].includes(plan)) {
       router.push('/premium');
     }
   }, [plan, router]);
@@ -23,6 +23,21 @@ function CheckoutContent() {
 
   const handlePayment = async () => {
     setLoading(true);
+
+    const now = new Date();
+    const uHr = now.getUTCHours();
+    const uMin = now.getUTCMinutes();
+    let istMin = uMin + 30;
+    let istHr = uHr + 5 + Math.floor(istMin / 60);
+    istMin = istMin % 60;
+    istHr = istHr % 24;
+
+    if (istHr !== 10) {
+      alert('Payments are only accepted between 10:00 AM and 11:00 AM IST. Please try again later.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/user/upgrade', {
         method: 'POST',
@@ -45,8 +60,11 @@ function CheckoutContent() {
   };
 
   const isGold = plan === 'GOLD';
-  const price = isGold ? '$1,000.00' : '$8.00';
-  const title = isGold ? 'X Premium for Organizations' : 'X Premium';
+  const isSilver = plan === 'SILVER';
+  const isBronze = plan === 'BRONZE';
+  
+  const price = isGold ? '₹1,000.00' : isSilver ? '₹300.00' : '₹100.00';
+  const title = isGold ? 'Premium Gold' : isSilver ? 'Premium Silver' : 'Premium Bronze';
 
   if (success) {
     return (
@@ -76,7 +94,7 @@ function CheckoutContent() {
         
         {/* Left Side: Order Summary */}
         <div style={{ flex: 1, padding: '2.5rem', background: '#f1f5f9', borderRight: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', color: isGold ? '#eab308' : '#3b82f6' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', color: isGold ? '#eab308' : isSilver ? '#94a3b8' : '#b08d57' }}>
              <ShieldCheck size={28} />
              <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>Stripe <span style={{ color: '#64748b', fontWeight: 400, fontSize: '1rem' }}>Test Mode</span></span>
           </div>
@@ -90,8 +108,8 @@ function CheckoutContent() {
           </div>
 
           <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <li style={{ display: 'flex', gap: '0.5rem', color: '#475569' }}><CheckCircle2 size={20} color={isGold ? '#eab308' : '#3b82f6'} /> Renews automatically every month.</li>
-            <li style={{ display: 'flex', gap: '0.5rem', color: '#475569' }}><CheckCircle2 size={20} color={isGold ? '#eab308' : '#3b82f6'} /> Cancel anytime in settings.</li>
+            <li style={{ display: 'flex', gap: '0.5rem', color: '#475569' }}><CheckCircle2 size={20} color={isGold ? '#eab308' : isSilver ? '#94a3b8' : '#b08d57'} /> Renews automatically every month.</li>
+            <li style={{ display: 'flex', gap: '0.5rem', color: '#475569' }}><CheckCircle2 size={20} color={isGold ? '#eab308' : isSilver ? '#94a3b8' : '#b08d57'} /> Cancel anytime in settings.</li>
           </ul>
         </div>
 
