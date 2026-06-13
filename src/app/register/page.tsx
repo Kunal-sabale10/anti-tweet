@@ -160,7 +160,7 @@ function RegisterForm() {
                   placeholder="you@example.com"
                   required
                   autoFocus={!prefillEmail}
-                  style={inputStyle}
+                  className="x-input"
                 />
               </div>
 
@@ -174,7 +174,7 @@ function RegisterForm() {
                   value={phone}
                   onChange={e => setPhone(e.target.value)}
                   placeholder="+91 9999999999"
-                  style={inputStyle}
+                  className="x-input"
                 />
               </div>
 
@@ -186,7 +186,8 @@ function RegisterForm() {
                 <select
                   value={language}
                   onChange={e => setLanguage(e.target.value)}
-                  style={{ ...inputStyle, appearance: 'none' as const }}
+                  className="x-input"
+                  style={{ appearance: 'none' }}
                 >
                   <option value="EN">English</option>
                   <option value="HI">Hindi</option>
@@ -226,7 +227,7 @@ function RegisterForm() {
                     placeholder="Min. 8 characters"
                     required
                     autoFocus
-                    style={{ ...inputStyle, paddingRight: '3rem' }}
+                    className="x-input"
                   />
                   <button
                     type="button"
@@ -261,8 +262,8 @@ function RegisterForm() {
                   onChange={e => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter password"
                   required
+                  className="x-input"
                   style={{
-                    ...inputStyle,
                     borderColor: confirmPassword && password !== confirmPassword
                       ? 'rgba(239,68,68,0.5)' : 'rgba(255,255,255,0.15)'
                   }}
@@ -319,12 +320,6 @@ function RegisterForm() {
 }
 
 // Shared styles
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '0.85rem 1rem', borderRadius: '8px',
-  border: '1.5px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)',
-  color: 'var(--foreground)', fontSize: '1rem', boxSizing: 'border-box', transition: 'border-color 0.2s'
-};
-
 const primaryBtnStyle = (active: boolean): React.CSSProperties => ({
   width: '100%', padding: '0.85rem', borderRadius: '9999px',
   background: active ? 'var(--foreground)' : 'rgba(255,255,255,0.2)',

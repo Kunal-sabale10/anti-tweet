@@ -14,8 +14,9 @@
   --card-border-light: rgba(255,255,255,0.06);
 
   --glass-bg: rgba(15, 23, 42, 0.85);
-  --sidebar-width: 275px;
+  --sidebar-width: 280px;
   --main-width: 600px;
+  --right-width: 340px;
 
   --muted: #64748b;
   --muted-hover: #e7e9ea;
@@ -26,6 +27,28 @@
   --hover-bg: rgba(255, 255, 255, 0.07);
   --active-bg: rgba(255, 255, 255, 0.1);
   --nav-hover: rgba(255, 255, 255, 0.07);
+
+  /* Spacing Scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Typography Scale */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 15px; /* Twitter default body */
+  --text-lg: 16px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-4xl: 32px;
 }
 
 [data-theme='light'] {
@@ -71,8 +94,9 @@ a {
 .x-layout {
   display: flex;
   min-height: 100vh;
-  max-width: 1265px;
+  max-width: calc(var(--sidebar-width) + var(--main-width) + var(--right-width));
   margin: 0 auto;
+  justify-content: center;
 }
 
 /* ─── Left Sidebar ─── */
@@ -83,10 +107,11 @@ a {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0 12px;
+  padding: 0 var(--space-3);
   flex-shrink: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  align-items: flex-start;
 }
 
 /* ─── Main Feed ─── */
@@ -94,16 +119,23 @@ a {
   flex: 1;
   min-width: 0;
   max-width: var(--main-width);
+  width: 100%;
   border-left: 1px solid var(--card-border);
   border-right: 1px solid var(--card-border);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Right Panel ─── */
 .x-right {
-  width: 350px;
+  width: var(--right-width);
   flex-shrink: 0;
-  padding: 0 16px;
+  padding: 0 var(--space-6) 0 var(--space-8);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 /* ─── Nav Item (Twitter/X style) ─── */
@@ -565,6 +597,48 @@ a {
   box-shadow: none;
 }
 
+/* ─── Messages Layout ─── */
+.x-messages-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+}
+
+.x-messages-list {
+  width: 380px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.x-messages-chat {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--background);
+}
+
+@media (max-width: 767px) {
+  .x-messages-list.has-selection {
+    display: none;
+  }
+  
+  .x-messages-chat.no-selection {
+    display: none;
+  }
+  
+  .x-messages-list {
+    width: 100%;
+    border-right: none;
+  }
+}
+
 /* ─── Animations ─── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
@@ -631,40 +705,79 @@ input[type="search"] { border-radius: 9999px; }
   transform: translateZ(0);
 }
 
-/* ── Desktop (≥ 1271px): full sidebar + right panel ── */
-@media (min-width: 1271px) {
-  .x-mobile-top-bar { display: none; }
-  .x-mobile-nav     { display: none; }
-  .x-mobile-fab     { display: none; }
+/* ── Desktop (≥ 1366px): full sidebar + right panel ── */
+@media (min-width: 768px) {
+  .x-mobile-top-bar { display: none !important; }
+  .x-mobile-nav     { display: none !important; }
+  .x-mobile-fab     { display: none !important; }
+  .x-drawer-overlay { display: none !important; }
 }
 
-/* ── Laptop (1025–1270px): icon-only sidebar, no right panel labels ── */
-@media (max-width: 1270px) {
-  .x-sidebar { width: 72px; padding: 0 8px; }
+/* ── Tablet / Laptop (768px – 1365px): icon-only sidebar, no right panel ── */
+@media (max-width: 1365px) {
+  /* Right panel hidden */
+  .x-right { display: none; }
+  
+  /* Compact left sidebar */
+  .x-sidebar { width: 88px; padding: 0 12px; align-items: center; }
   .x-nav-item { padding: 12px; gap: 0; justify-content: center; border-radius: 9999px; }
   .x-nav-item .x-nav-label { display: none; }
   .x-post-btn .x-post-label { display: none; }
-  .x-post-btn { width: 50px; height: 50px; padding: 0; border-radius: 9999px; }
+  .x-post-btn { width: 50px; height: 50px; padding: 0; border-radius: 9999px; margin-top: 16px; }
   .x-account-btn .x-account-info { display: none; }
   .x-account-btn .x-account-more { display: none; }
-  .x-account-btn { justify-content: center; padding: 8px; }
+  .x-account-btn { justify-content: center; padding: 12px; margin-top: auto; margin-bottom: 12px; }
   .x-sidebar-wordmark-text { display: none; }
 }
 
-/* ── Hide right panel on smaller desktops ── */
-@media (max-width: 1150px) {
-  .x-right { display: none; }
-}
+/* ── Mobile (< 768px): sidebar hidden (drawer), top bar + bottom nav ── */
+@media (max-width: 767px) {
+  .x-sidebar { 
+    position: fixed; 
+    top: 0; 
+    left: -280px; /* Hidden by default */
+    bottom: 0; 
+    width: 280px; 
+    background: var(--background); 
+    z-index: 200; 
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    align-items: stretch;
+  }
+  
+  .x-sidebar.open {
+    transform: translateX(280px);
+  }
 
-/* ── Tablet / Mobile (≤ 1024px): sidebar hidden, top bar + bottom nav ── */
-@media (max-width: 1024px) {
-  .x-sidebar { display: none; }
   .x-main {
     max-width: 100%;
     border: none;
     padding-top: 0;
     /* Bottom padding = nav height + safe area */
     padding-bottom: calc(56px + env(safe-area-inset-bottom) + 12px);
+  }
+
+  /* Reset compact styles inside drawer */
+  .x-nav-item { justify-content: flex-start; gap: 20px; padding: 16px; }
+  .x-nav-item .x-nav-label { display: block; }
+  .x-post-btn .x-post-label { display: block; }
+  .x-post-btn { width: 100%; height: auto; padding: 16px; border-radius: 9999px; }
+  .x-account-btn .x-account-info { display: flex; }
+  .x-account-btn { justify-content: flex-start; }
+
+  /* Drawer Overlay */
+  .x-drawer-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 190;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .x-drawer-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   /* ─── Mobile Top Bar ─── */

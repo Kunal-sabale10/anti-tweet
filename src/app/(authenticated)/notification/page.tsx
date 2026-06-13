@@ -120,7 +120,7 @@ export default function NotificationsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
       {/* Header */}
       <div style={{
-        padding: '1rem 1.25rem',
+        padding: 'var(--space-3) var(--space-4)',
         borderBottom: '1px solid var(--card-border)',
         display: 'flex',
         justifyContent: 'space-between',
@@ -163,7 +163,7 @@ export default function NotificationsPage() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {loading ? (
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} style={{ padding: '1.25rem', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: '1rem', opacity: 0.5 }}>
+            <div key={i} style={{ padding: 'var(--space-4)', borderBottom: '1px solid var(--card-border)', display: 'flex', gap: 'var(--space-4)', opacity: 0.5 }}>
               <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }} />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 <div style={{ height: 12, width: '40%', borderRadius: 6, background: 'rgba(255,255,255,0.06)' }} />
@@ -192,7 +192,7 @@ export default function NotificationsPage() {
                     transition: 'background-color 0.5s',
                   }}
                 >
-                  <Link href={linkUrl} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: '1rem', padding: '1rem 1.25rem' }} className="notif-hover">
+                  <Link href={linkUrl} style={{ textDecoration: 'none', color: 'inherit', display: 'flex', gap: 'var(--space-3)', padding: 'var(--space-4)' }} className="notif-hover">
                     <div style={{ width: 32, display: 'flex', justifyContent: 'flex-end', paddingTop: '0.2rem' }}>
                       <NotifIcon type={n.type} />
                     </div>

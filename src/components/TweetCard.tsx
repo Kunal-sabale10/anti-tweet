@@ -157,16 +157,16 @@ export default function TweetCard({ tweet, currentUserId, currentUserSubscriptio
       className="tweet-card"
     >
       {tweet.retweetOf && (
-        <div style={{ padding: '0.75rem 1.25rem 0 3.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--muted)', fontSize: '0.8rem', fontWeight: 600 }}>
+        <div style={{ padding: 'var(--space-3) var(--space-4) 0 44px', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--muted)', fontSize: 'var(--text-sm)', fontWeight: 600 }}>
           <Repeat2 size={13} />
           {tweet.user?.displayName || tweet.user?.email?.split('@')[0]} Reposted
         </div>
       )}
 
       {/* Tweet body */}
-      <div style={{ padding: '1.25rem', display: 'flex', gap: '1rem' }} className="tweet-hover">
-        <div style={{ flexShrink: 0 }}>
-          <Avatar user={tweet.retweetOf ? tweet.retweetOf.user : tweet.user} size={48} />
+      <div style={{ padding: 'var(--space-4)', display: 'flex', gap: 'var(--space-3)' }} className="tweet-hover">
+        <div style={{ flexShrink: 0, width: '40px', display: 'flex', justifyContent: 'center' }}>
+          <Avatar user={tweet.retweetOf ? tweet.retweetOf.user : tweet.user} size={40} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.25rem', flexWrap: 'wrap' }}>
@@ -229,7 +229,7 @@ export default function TweetCard({ tweet, currentUserId, currentUserSubscriptio
           <CommunityNoteWidget tweetId={tweet.retweetOf ? tweet.retweetOfId! : tweet.id} />
 
           {/* Actions */}
-          <div className="tweet-action-row" style={{ display: 'flex', gap: '0', marginTop: '0.5rem', maxWidth: '420px', justifyContent: 'space-between' }}>
+          <div className="tweet-action-row" style={{ display: 'flex', marginTop: 'var(--space-3)', maxWidth: '425px', justifyContent: 'space-between' }}>
             <button
               className="action-btn"
               onClick={toggleReplies}

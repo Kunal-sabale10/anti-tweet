@@ -861,20 +861,10 @@ export default function MessagesPage() {
   }, []);
 
   return (
-    <div className="messages-shell" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <div className="x-messages-layout">
 
       {/* ── Left: Conversation list ─────────────────────────── */}
-      <div className={`messages-list-panel ${selectedId ? 'is-chat-selected' : ''}`} style={{
-        width: selectedId ? '280px' : '100%',
-        minWidth: selectedId ? '280px' : 'unset',
-        maxWidth: '100%',
-        transition: 'width 0.3s ease, min-width 0.3s ease',
-        overflow: 'hidden',
-        borderRight: '1px solid var(--card-border)',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-      }}>
+      <div className={`x-messages-list ${selectedId ? 'has-selection' : ''}`}>
         {loading ? (
           <div style={{ padding: '2rem', color: 'var(--muted)', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
             <div style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
@@ -891,7 +881,7 @@ export default function MessagesPage() {
       </div>
 
       {/* ── Right: Chat area ────────────────────────────────── */}
-      <div className={`messages-chat-panel ${selectedId ? 'is-chat-selected' : ''}`} style={{ flex: 1, display: selectedId ? 'flex' : 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+      <div className={`x-messages-chat ${!selectedId ? 'no-selection' : ''}`}>
         {selectedId && selectedConv ? (
           <ChatWindow
             key={selectedId}

@@ -144,18 +144,6 @@ export default function LoginPage() {
   };
 
   // ── Shared styles ─────────────────────────────────────────────────────────
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '0.9rem 1rem',
-    borderRadius: '10px',
-    border: '1.5px solid rgba(255,255,255,0.12)',
-    background: 'rgba(255,255,255,0.05)',
-    color: 'var(--foreground)',
-    fontSize: '1rem',
-    boxSizing: 'border-box',
-    transition: 'border-color 0.2s, box-shadow 0.2s',
-    outline: 'none',
-  };
 
   const pillBtn = (active: boolean, fullWidth = true): React.CSSProperties => ({
     ...(fullWidth ? { width: '100%' } : {}),
@@ -273,7 +261,7 @@ export default function LoginPage() {
                     placeholder="Email address"
                     required
                     autoComplete="email"
-                    style={inputStyle}
+                    className="x-input"
                   />
 
                   {/* Inline autocomplete dropdown */}
@@ -287,6 +275,7 @@ export default function LoginPage() {
                         <button
                           key={s}
                           type="button"
+                          className="x-input"
                           onMouseDown={() => { setEmail(s); setShowDropdown(false); }}
                           style={{
                             display: 'flex', alignItems: 'center', gap: '0.75rem',
@@ -375,7 +364,7 @@ export default function LoginPage() {
                     placeholder="Password"
                     required
                     autoFocus
-                    style={{ ...inputStyle, paddingRight: '3rem' }}
+                    className="x-input"
                   />
                   <button
                     type="button"
@@ -425,7 +414,7 @@ export default function LoginPage() {
                   onChange={e => setOtpCode(e.target.value)}
                   placeholder="Enter 6-digit code"
                   autoFocus
-                  style={inputStyle}
+                  className="x-input"
                 />
                 
                 {mockOtp && (

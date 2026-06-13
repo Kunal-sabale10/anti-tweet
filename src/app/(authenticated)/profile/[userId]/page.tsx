@@ -262,8 +262,8 @@ export default function UserProfilePage() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
 
       {/* Back button bar */}
-      <div style={{ padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', position: 'sticky', top: 0, background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(12px)', zIndex: 5, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: '0.3rem', display: 'flex', borderRadius: '50%' }} className="back-btn">
+      <div style={{ padding: 'var(--space-2) var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', position: 'sticky', top: 0, background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(12px)', zIndex: 5, borderBottom: '1px solid var(--card-border-light)' }}>
+        <button onClick={() => router.back()} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', padding: 'var(--space-2)', display: 'flex', borderRadius: '50%' }} className="back-btn">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -296,8 +296,8 @@ export default function UserProfilePage() {
       </div>
 
       {/* Profile info row */}
-      <div style={{ padding: '0 1.25rem 1.25rem', position: 'relative' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '1rem' }}>
+      <div style={{ padding: '0 var(--space-4) var(--space-4)', position: 'relative' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 'var(--space-4)' }}>
 
           {/* Avatar with online dot */}
           <motion.div
@@ -429,7 +429,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* Name + handle + online label */}
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 'var(--space-2)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 900, margin: '0 0 0.15rem', display: 'flex', alignItems: 'center' }}>
               {user.displayName || user.email?.split('@')[0]}
@@ -497,8 +497,8 @@ export default function UserProfilePage() {
       )}
 
       {/* Posts tab */}
-      <div className="profile-tabs" style={{ borderBottom: '1px solid var(--card-border)' }}>
-        <div style={{ padding: '0.75rem 1.25rem', fontWeight: 700, fontSize: '0.9rem', borderBottom: '2px solid var(--accent)', display: 'inline-block', marginBottom: -1 }}>
+      <div className="profile-tabs" style={{ borderBottom: '1px solid var(--card-border)', display: 'flex', marginTop: 'var(--space-3)' }}>
+        <div style={{ padding: 'var(--space-3) var(--space-4)', fontWeight: 700, fontSize: 'var(--text-base)', borderBottom: '4px solid var(--accent)', display: 'flex', justifyContent: 'center', flex: 1, marginBottom: -1 }}>
           Posts
         </div>
       </div>

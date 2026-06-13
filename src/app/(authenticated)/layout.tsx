@@ -46,6 +46,7 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
   const [suggestedUsers, setSuggestedUsers] = useState<SuggestedUser[]>([]);
   const [followingMap, setFollowingMap] = useState<Record<string, boolean>>({});
   const [trending, setTrending] = useState<{ tag: string; count: number }[]>([]);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetch('/api/user/profile').then(r => r.json()).then(data => {
@@ -207,8 +208,11 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
     <div className="x-layout">
       <KeyboardShortcuts />
 
+      {/* ─── Drawer Overlay (Mobile) ─── */}
+      <div className={`x-drawer-overlay ${isDrawerOpen ? 'open' : ''}`} onClick={() => setIsDrawerOpen(false)} />
+
       {/* ─── Left Sidebar ─── */}
-      <aside className="x-sidebar">
+      <aside className={`x-sidebar ${isDrawerOpen ? 'open' : ''}`}>
         {/* Wordmark: Logo + Brand Name */}
         <Link
           href="/dashboard"
@@ -457,22 +461,28 @@ function AuthenticatedLayoutInner({ children }: { children: React.ReactNode }) {
             WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
           }}>Anti-Tweet</span>
         </Link>
-        <Link
-          href="/explore"
-          aria-label="Search"
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: '9999px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'var(--muted)',
-            textDecoration: 'none',
-          }}
-        >
-          <Search size={22} />
-        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Link
+            href="/explore"
+            aria-label="Search"
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: '9999px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--muted)',
+              textDecoration: 'none',
+            }}
+          >
+            <Search size={22} />
+          </Link>
+          {/* Right: avatar opens Drawer on mobile */}
+          <div className="x-avatar" style={{ background: avatarBg, width: 32, height: 32, fontSize: '0.8rem', cursor: 'pointer' }} onClick={() => setIsDrawerOpen(true)}>
+            {avatarInitial}
+          </div>
+        </div>
       </div>
 
       {/* ─── Main Content ─── */}
