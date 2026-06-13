@@ -12,7 +12,7 @@ type ApiResponse = {
 };
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [result, setResult] = useState<ApiResponse | null>(null);
@@ -28,7 +28,7 @@ export default function ForgotPassword() {
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+        body: JSON.stringify({ identifier: identifier.trim().toLowerCase() }),
       });
       const data = await res.json() as ApiResponse;
       if (!res.ok) throw new Error(data.error || 'Failed to reset password');
@@ -66,7 +66,7 @@ export default function ForgotPassword() {
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.75rem' }}>Check your inbox!</h1>
           <p style={{ color: '#71767b', marginBottom: '0.5rem', lineHeight: 1.6 }}>
-            We sent a reset link to <strong style={{ color: '#e7e9ea' }}>{email}</strong>.
+            We sent a reset link to <strong style={{ color: '#e7e9ea' }}>{identifier}</strong>.
           </p>
           <p style={{ color: '#71767b', fontSize: '0.85rem', marginBottom: '2rem' }}>
             Check your spam folder if it doesn't appear. Link expires in 15 minutes.
@@ -176,7 +176,7 @@ export default function ForgotPassword() {
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.4rem' }}>Forgot password?</h1>
           <p style={{ color: '#71767b', fontSize: '0.9rem', lineHeight: 1.5 }}>
-            Enter your email and we'll give you a reset link.
+            Enter your email or phone number and we'll give you a reset link.
           </p>
         </div>
 
@@ -196,30 +196,30 @@ export default function ForgotPassword() {
         </AnimatePresence>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ position: 'relative' }}>
-            <Mail size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#71767b', pointerEvents: 'none' }} />
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="Enter your email address"
-              required autoFocus
-              style={inputStyle}
-            />
-          </div>
+            <div style={{ position: 'relative' }}>
+              <Mail size={20} color="#71767b" style={{ position: 'absolute', top: '14px', left: '16px' }} />
+              <input
+                type="text"
+                value={identifier}
+                onChange={e => setIdentifier(e.target.value)}
+                placeholder="Email address or Phone number"
+                style={inputStyle}
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading || !email}
-            style={{
-              width: '100%', padding: '0.875rem', borderRadius: '9999px',
-              background: (loading || !email) ? 'rgba(255,255,255,0.12)' : '#e7e9ea',
-              color: (loading || !email) ? 'rgba(255,255,255,0.4)' : '#0f1117',
-              border: 'none', fontWeight: 700, fontSize: '1rem',
-              cursor: (loading || !email) ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-            }}
-          >
+            <button
+              type="submit"
+              disabled={loading || !identifier}
+              style={{
+                width: '100%', padding: '0.875rem', borderRadius: '9999px', border: 'none',
+                background: (loading || !identifier) ? 'rgba(255,255,255,0.12)' : '#e7e9ea',
+                color: (loading || !identifier) ? 'rgba(255,255,255,0.4)' : '#0f1117',
+                fontWeight: 700, fontSize: '1.05rem',
+                cursor: (loading || !identifier) ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
             {loading ? (
               <>
                 <span style={{ width: '16px', height: '16px', border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.75s linear infinite', display: 'inline-block' }} />

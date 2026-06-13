@@ -35,6 +35,17 @@ function ResetPasswordForm() {
     return { label: 'Strong', color: '#22c55e', w: '100%' };
   })();
 
+  const generatePassword = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let newPassword = '';
+    for (let i = 0; i < 12; i++) {
+      newPassword += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setPassword(newPassword);
+    setConfirm(newPassword);
+    setShowPassword(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) { setError("Passwords don't match"); return; }
@@ -131,9 +142,14 @@ function ResetPasswordForm() {
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {/* New Password */}
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>
-                    New password
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>
+                      New password
+                    </label>
+                    <button type="button" onClick={generatePassword} style={{ background: 'rgba(29,155,240,0.1)', padding: '0.2rem 0.6rem', borderRadius: '4px', border: '1px solid rgba(29,155,240,0.3)', color: '#1d9bf0', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}>
+                      Generate Random
+                    </button>
+                  </div>
                   <div style={{ position: 'relative' }}>
                     <input
                       type={showPassword ? 'text' : 'password'}

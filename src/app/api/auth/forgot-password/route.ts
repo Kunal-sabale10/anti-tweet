@@ -55,36 +55,41 @@ async function trySendEmail(to: string, resetUrl: string): Promise<boolean> {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json() as { email?: string };
-    const email = body.email?.trim().toLowerCase();
+    const body = await req.json() as { identifier?: string };
+    const identifier = body.identifier?.trim().toLowerCase();
 
-    if (!email) {
-      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+    if (!identifier) {
+      return NextResponse.json({ error: 'Email or phone number is required' }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email },
-      select: { id: true, email: true, lastPasswordResetAt: true }
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { phone: identifier }
+        ]
+      },
+      select: { id: true, email: true, phone: true, lastPasswordResetAt: true }
     });
 
     // If account doesn't exist — still show success (security: don't reveal existence)
-    if (!user || !user.email) {
+    if (!user) {
       return NextResponse.json({ success: true, emailSent: false });
     }
 
-    // Rate limit: 1 per 5 minutes
+    // Rate limit: 1 per day (1440 minutes)
     if (user.lastPasswordResetAt) {
       const minsAgo = (Date.now() - new Date(user.lastPasswordResetAt).getTime()) / 60000;
-      if (minsAgo < 5) {
+      if (minsAgo < 1440) {
         return NextResponse.json({
-          error: `Please wait ${Math.ceil(5 - minsAgo)} more minute(s) before requesting again.`
+          error: 'You can use this option only one time per day.'
         }, { status: 429 });
       }
     }
 
     // Generate JWT reset token (15 min expiry)
     const token = jwt.sign(
-      { userId: user.id, email: user.email, purpose: 'password-reset' },
+      { userId: user.id, email: user.email, phone: user.phone, purpose: 'password-reset' },
       JWT_SECRET,
       { expiresIn: '15m' }
     );
@@ -97,17 +102,19 @@ export async function POST(req: Request) {
       data: { lastPasswordResetAt: new Date() }
     });
 
-    // Try sending email
-    const emailSent = await trySendEmail(user.email, resetUrl);
+    // Try sending email if user has an email
+    let emailSent = false;
+    if (user.email) {
+      emailSent = await trySendEmail(user.email, resetUrl);
+    }
 
     if (emailSent) {
       // Email sent — still return URL to help user out in case of delivery issues
       return NextResponse.json({ success: true, emailSent: true, resetUrl });
     }
 
-    // Email not configured — return the reset URL directly so the user can reset now
-    // (safe: the user is already authenticated to their own browser session)
-    console.log(`[Password Reset] No email config. Reset URL for ${email}: ${resetUrl}`);
+    // Email not configured or phone used — return the reset URL directly so the user can reset now
+    console.log(`[Password Reset] Reset URL for ${identifier}: ${resetUrl}`);
     return NextResponse.json({ success: true, emailSent: false, resetUrl });
 
   } catch (error) {
